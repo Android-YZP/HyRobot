@@ -26,7 +26,6 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 //        mRobotPresenter.HttpChangeUserinfo();
 //        mRobotPresenter.HttpList();
 //        mRobotPresenter.HttpLogin();
-        Logger.e(" mRobotPresenter.HttpXianPao();");
         mRobotPresenter.HttpXianPao();
 //        AppUtils.installAppSilent("");
     }

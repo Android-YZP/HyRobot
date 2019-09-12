@@ -62,6 +62,15 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
     }
 
 
+    public void exit() {
+        if (null != mTts) {
+            mTts.stopSpeaking();
+            // 退出时释放连接
+            mTts.destroy();
+        }
+    }
+
+
     /**
      * 读取AIUI配置
      */
@@ -362,5 +371,4 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
         }
     }
-
 }

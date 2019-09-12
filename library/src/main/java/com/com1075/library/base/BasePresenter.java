@@ -35,9 +35,8 @@ public class BasePresenter<V, T> implements LifeCycleListener {
      */
     private void setListener(T activity) {
         if (getActivity() != null) {
-            if (activity instanceof BaseActivity) {
+            if (activity instanceof BaseActivity)
                 ((BaseActivity) getActivity()).setOnLifeCycleListener(this);
-            }
         }
     }
 

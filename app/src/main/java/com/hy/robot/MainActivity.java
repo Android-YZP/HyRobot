@@ -5,14 +5,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.widget.ImageView;
 import com.com1075.library.base.BaseActivity;
-import com.hy.robot.activitys.JieKouActivity;
+import com.google.gson.Gson;
+import com.hy.robot.bean.AiUiResultBean;
+import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.contract.IAIUIContract;
 import com.hy.robot.presenter.AIUIPresenter;
+import com.hy.robot.utils.SwitchBGUtils;
+import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.umeng.message.PushAgent;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends BaseActivity implements IAIUIContract {
     /**
@@ -25,16 +31,44 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
      */
 
     private AIUIPresenter aiuiPresenter = new AIUIPresenter(this, this);
+    private ImageView mImageView;
 
     @Override
     protected int getContentViewId() {
+        PushAgent.getInstance(this).onAppStart();
+        EventBus.getDefault().register(this);
         return R.layout.activity_main;
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        System.exit(0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        aiuiPresenter.exit();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageWrap event) {
+        // 手机端指令
+        Logger.e(event.message);
+    }
+
+
     @Override
     protected void initView() {
-//            startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
-            startActivity(new Intent(MainActivity.this, JieKouActivity.class));
+        mImageView = findViewById(R.id.im_bg);
+//      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+//      startActivity(new Intent(MainActivity.this, JieKouActivity.class));
+
+
+
 
     }
 
@@ -48,6 +82,10 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     @Override
     protected void setListener() {
 
+        Intent i = new Intent("com.hy.robot.USER_ACTION");
+        i.putExtra("key","com.hy.robot.USER_ACTION");
+        sendBroadcast(i);
+
     }
 
     @Override
@@ -57,27 +95,16 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @Override
     public void eventResult(String s) {
-        Logger.e(s);
-        JSONObject cntJson = null;
+        Logger.i(s);
         try {
-            cntJson = new JSONObject(s);
-            JSONObject result = cntJson.optJSONObject("intent");
-            // 解析得到语义结果
-            String str = "";
-            //在线语义结果
-            if (result.optInt("rc") == 0) {
-                JSONObject answer = result.optJSONObject("answer");
-                if (answer != null) {
-                    str = answer.optString("text");
-                    aiuiPresenter.speachText(str);
-                }
-            }
-
-
-        } catch (JSONException e) {
+            AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
+            UIUtils.showTip(aiUiResultBean.getIntent().getService());
+            aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
+            Logger.e(aiUiResultBean.getIntent().getAnswer().toString());
+            SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService()+"");
+        }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -101,6 +128,9 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
+
+
+
     private void requestPermissions() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -109,7 +139,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
                 if (permission != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.WRITE_SETTINGS,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_SETTINGS,
                             Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS}, 0x0010);
@@ -123,6 +153,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        aiuiPresenter.startAIUI();
+        aiuiPresenter.startAIUI();
     }
 }

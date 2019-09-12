@@ -3,6 +3,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.widget.Toast;
 import com.com1075.library.base.BaseApplication;
+import com.hy.robot.bean.MessageWrap;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.orhanobut.logger.Logger;
@@ -11,6 +12,9 @@ import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.entity.UMessage;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Map;
 
 public class App extends BaseApplication {
@@ -45,14 +49,11 @@ public class App extends BaseApplication {
             @Override
             public void onSuccess(String deviceToken) {
                 Logger.e("注册成功：deviceToken：-------->  " + deviceToken);
-                Toast.makeText(getApplicationContext(),deviceToken,Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(String s, String s1) {
                 Logger.e("注册失败：-------->  " + "s:" + s + ",s1:" + s1);
-                Toast.makeText(getApplicationContext(),"注册失败",Toast.LENGTH_LONG).show();
-
             }
         });
 
@@ -68,6 +69,8 @@ public class App extends BaseApplication {
                 for (Map.Entry entry : msg.extra.entrySet()) {
                     Object key = entry.getKey();
                     Object value = entry.getValue();
+                    EventBus.getDefault().post(MessageWrap.getInstance(value+""));
+                    Logger.e("自定义数值：-------->  " + "key:" + key + ",value:" + value);
                 }
                 return super.getNotification(context, msg);
             }
