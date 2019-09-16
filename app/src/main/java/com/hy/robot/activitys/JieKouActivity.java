@@ -25,8 +25,8 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 //        mRobotPresenter.HttpChangeLevelup();
 //        mRobotPresenter.HttpChangeUserinfo();
 //        mRobotPresenter.HttpList();
-//        mRobotPresenter.HttpLogin();
-        mRobotPresenter.HttpXianPao();
+        mRobotPresenter.HttpLogin();
+//        mRobotPresenter.HttpXianPao();
 //        AppUtils.installAppSilent("");
     }
 
@@ -64,6 +64,7 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 
     @Override
     public void LoadingLoginDataSuccess(String result) {
+        Logger.e(result);
 
     }
 

@@ -27,8 +27,8 @@ public class HttpResponse {
     /**
      * 数据对象[成功返回对象,失败返回错误说明]
      */
-    @SerializedName("result")
-    private Object result;
+    @SerializedName("data")
+    private Object data;
 
     /**
      * 是否成功(这里约定0)
@@ -40,7 +40,7 @@ public class HttpResponse {
     }
 
     public String toString() {
-        String response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"result\":" + new Gson().toJson(result) + "}";
+        String response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"data\":" + new Gson().toJson(data) + "}";
         return response;
     }
 
@@ -61,11 +61,11 @@ public class HttpResponse {
         this.code = code;
     }
 
-    public Object getResult() {
-        return result;
+    public Object getData() {
+        return data;
     }
 
-    public void setResult(Object result) {
-        this.result = result;
+    public void setData(Object data) {
+        this.data = data;
     }
 }

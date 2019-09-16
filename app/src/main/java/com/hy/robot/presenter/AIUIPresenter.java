@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Base64;
-
 import com.com1075.library.base.BasePresenter;
 import com.hy.robot.MainActivity;
 import com.hy.robot.bean.MessageWrap;
@@ -22,11 +21,9 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SynthesizerListener;
 import com.orhanobut.logger.Logger;
-
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

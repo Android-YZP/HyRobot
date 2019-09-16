@@ -8,6 +8,7 @@ import android.os.Build;
 import android.widget.ImageView;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
+import com.hy.robot.activitys.JieKouActivity;
 import com.hy.robot.bean.AiUiResultBean;
 import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.contract.IAIUIContract;
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
 //      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
-//      startActivity(new Intent(MainActivity.this, JieKouActivity.class));
+      startActivity(new Intent(MainActivity.this, JieKouActivity.class));
 
 
 
@@ -126,10 +127,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     public void error(String e) {
 
     }
-
-
-
-
 
     private void requestPermissions() {
         try {

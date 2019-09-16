@@ -7,9 +7,12 @@ import com.com1075.library.http.observer.HttpRxObservable;
 import com.com1075.library.http.observer.HttpRxObserver;
 import com.com1075.library.http.retrofit.HttpRequest;
 import com.hy.robot.api.ApiUtils;
+import com.hy.robot.api.requestbean.LoginBean;
 import com.hy.robot.contract.IRobotContract;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
+
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -77,9 +80,9 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
     public void HttpLogin() {
 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
-        Map<String, Object> request = HttpRequest.getRequest();
-        request.put("mobile", "5");
-        request.put("password", "1");
+        LoginBean LoginBean = new LoginBean();
+        LoginBean.setPassword("123456");
+        LoginBean.setMobile("17625017026");
 
         HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "randList") {
 
@@ -107,7 +110,8 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             }
         };
 
-        HttpRxObservable.getObservable(ApiUtils.getLoginApi().login(request), getActivity()).subscribe(httpRxObserver);
+
+        HttpRxObservable.getObservable(ApiUtils.getLoginApi().login(LoginBean), getActivity()).subscribe(httpRxObserver);
     }
 
 
