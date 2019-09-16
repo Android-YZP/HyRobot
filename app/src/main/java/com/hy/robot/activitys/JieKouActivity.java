@@ -24,7 +24,7 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
     protected void initData() {
 
 
-        mRobotPresenter.HttpList();
+//        mRobotPresenter.HttpList();
 //        AppUtils.installAppSilent("");
 
 

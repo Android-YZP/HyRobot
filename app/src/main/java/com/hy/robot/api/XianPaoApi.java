@@ -15,7 +15,7 @@ import retrofit2.http.POST;
  * @author 姚中平
  */
 public interface XianPaoApi {
-    @Headers("token: max-age=640000")
+//    @Headers("token: max-age=640000")
     @FormUrlEncoded
     @POST("https://xianpaotv.com/video/api/video/randList")
     Observable<HttpResponse> getVideo(@FieldMap Map<String, Object> request);

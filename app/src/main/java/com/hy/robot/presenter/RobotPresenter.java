@@ -12,7 +12,9 @@ import com.hy.robot.api.requestbean.LoginBean;
 import com.hy.robot.contract.IRobotContract;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
+
 import java.util.Map;
+
 import io.reactivex.disposables.Disposable;
 
 
@@ -27,6 +29,7 @@ import io.reactivex.disposables.Disposable;
 public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> {
     private final String TAG = RobotPresenter.class.getSimpleName();
     private BaseActivity activity;
+
     public RobotPresenter(IRobotContract view, BaseActivity activity) {
         super(view, activity);
         this.activity = activity;
@@ -52,7 +55,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             protected void onError(ApiException e) {
 
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -92,7 +95,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -132,7 +135,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -172,7 +175,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -216,7 +219,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -255,7 +258,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
@@ -294,7 +297,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             @Override
             protected void onError(ApiException e) {
                 Logger.e(e.toString() + "");
-                if (getView() != null){
+                if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
                 }
