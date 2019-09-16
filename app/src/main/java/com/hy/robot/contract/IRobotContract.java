@@ -25,5 +25,7 @@ public interface IRobotContract extends IBaseContract {
     void LoadingLoginDataSuccess(String result);
     //获取三眼咨询
     void LoadingSanYanDataSuccess(String result);
+    //修改版本号
+    void LoadingChangeVersionDataSuccess(String result);
 }
 

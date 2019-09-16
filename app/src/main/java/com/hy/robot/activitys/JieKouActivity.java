@@ -22,12 +22,18 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 
     @Override
     protected void initData() {
-//        mRobotPresenter.HttpChangeLevelup();
-//        mRobotPresenter.HttpChangeUserinfo();
-//        mRobotPresenter.HttpList();
-        mRobotPresenter.HttpLogin();
-//        mRobotPresenter.HttpXianPao();
+
+
+        mRobotPresenter.HttpList();
 //        AppUtils.installAppSilent("");
+
+
+//        mRobotPresenter.HttpChangeUserinfo();
+//        mRobotPresenter.HttpChangeLevelup();
+//        mRobotPresenter.HttpUserInfo();
+//        mRobotPresenter.HttpLogin();
+//        mRobotPresenter.HttpChangeVersion();
+//        mRobotPresenter.HttpXianPao();
     }
 
     @Override
@@ -38,28 +44,28 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
     // * 获取个人信息
     @Override
     public void LoadingDataSuccess(String result) {
-
+        Logger.e(result);
     }
 
     @Override
     public void LoadingXianPaoDataSuccess(String result) {
-        Logger.json(result);
+        Logger.e(result);
 
     }
 
     @Override
     public void LoadingListDataSuccess(String result) {
-
+        Logger.e(result);
     }
 
     @Override
     public void LoadingChangeUserInfoDataSuccess(String result) {
-
+        Logger.e(result);
     }
 
     @Override
     public void LoadingLevelupDataSuccess(String result) {
-
+        Logger.e(result);
     }
 
     @Override
@@ -70,12 +76,16 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 
     @Override
     public void LoadingSanYanDataSuccess(String result) {
+        Logger.e(result);
+    }
 
+    @Override
+    public void LoadingChangeVersionDataSuccess(String result) {
+        Logger.e(result);
     }
 
     @Override
     public void LoadingData() {
-
     }
 
     @Override

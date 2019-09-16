@@ -7,15 +7,12 @@ import com.com1075.library.http.observer.HttpRxObservable;
 import com.com1075.library.http.observer.HttpRxObserver;
 import com.com1075.library.http.retrofit.HttpRequest;
 import com.hy.robot.api.ApiUtils;
+import com.hy.robot.api.requestbean.ChangeUserInfoBean;
 import com.hy.robot.api.requestbean.LoginBean;
 import com.hy.robot.contract.IRobotContract;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
-
-import org.json.JSONObject;
-
 import java.util.Map;
-
 import io.reactivex.disposables.Disposable;
 
 
@@ -123,10 +120,11 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
         Map<String, Object> request = HttpRequest.getRequest();
 
-        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "randList") {
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpUserInfo") {
 
             @Override
             protected void onStart(Disposable d) {
+                Logger.e(d.toString() + "");
                 if (getView() != null)
                     getView().LoadingData();
             }
@@ -160,10 +158,10 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
         Map<String, Object> request = HttpRequest.getRequest();
-        request.put("limit", "1000");
+        request.put("limit", "1");
         request.put("page", "1");
 
-        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "randList") {
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpList") {
 
             @Override
             protected void onStart(Disposable d) {
@@ -199,9 +197,13 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
     public void HttpChangeUserinfo() {
 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
-        Map<String, Object> request = HttpRequest.getRequest();
-        request.put("device_token", "1000");
-        request.put("version", "1");
+//        Map<String, Object> request = HttpRequest.getRequest();
+//        request.put("device_token", "1000");
+//        request.put("version", "1");
+
+        ChangeUserInfoBean changeUserInfoBean = new ChangeUserInfoBean();
+        changeUserInfoBean.setDevice_token("fdssfsfsdfgsrghrsbfdbdfdbfdfn");
+        changeUserInfoBean.setVersion("22");
 
         HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "randList") {
 
@@ -229,7 +231,46 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             }
         };
 
-        HttpRxObservable.getObservable(ApiUtils.getChangeUserInfoApi().changeUserinfo(request), getActivity()).subscribe(httpRxObserver);
+        HttpRxObservable.getObservable(ApiUtils.getChangeUserInfoApi().changeUserinfo(changeUserInfoBean), getActivity()).subscribe(httpRxObserver);
+    }
+
+
+    /**
+     * 修改版本号
+     */
+    public void HttpChangeVersion() {
+
+        //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
+        Map<String, Object> request = HttpRequest.getRequest();
+        request.put("version", "1");
+
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpChangeVersion") {
+
+            @Override
+            protected void onStart(Disposable d) {
+                if (getView() != null)
+                    getView().LoadingData();
+            }
+
+            @Override
+            protected void onError(ApiException e) {
+                Logger.e(e.toString() + "");
+                if (getView() != null){
+                    getView().LoadingDataFail(e.getMsg());
+                    UIUtils.showTip(e.getMsg());
+                }
+
+            }
+
+            @Override
+            protected void onSuccess(Object response) {
+                if (getView() != null)
+                    getView().LoadingChangeVersionDataSuccess(response.toString());
+
+            }
+        };
+
+        HttpRxObservable.getObservable(ApiUtils.getChangeVersionApi().changeVersion(request), getActivity()).subscribe(httpRxObserver);
     }
 
 
@@ -242,7 +283,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
         Map<String, Object> request = HttpRequest.getRequest();
         request.put("userId", "1000");
 
-        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "randList") {
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpChangeLevelup") {
 
             @Override
             protected void onStart(Disposable d) {

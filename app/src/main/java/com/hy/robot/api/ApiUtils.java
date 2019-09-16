@@ -13,6 +13,7 @@ public class ApiUtils {
 
     private static XianPaoApi xianPaoApi;
     private static ChangeUserInfoApi changeUserInfoApi;
+    private static ChangeVersionApi changeVersionApi ;
     private static LevelUpApi levelUpApi;
     private static ListApi listApi;
     private static LoginApi loginApi;
@@ -54,6 +55,13 @@ public class ApiUtils {
             changeUserInfoApi = RetrofitUtils.get().retrofit().create(ChangeUserInfoApi.class);
         }
         return changeUserInfoApi;
+    }
+
+    public static ChangeVersionApi getChangeVersionApi() {
+        if (changeVersionApi == null) {
+            changeVersionApi = RetrofitUtils.get().retrofit().create(ChangeVersionApi.class);
+        }
+        return changeVersionApi;
     }
 
 
