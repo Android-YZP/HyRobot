@@ -3,5 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activitys.JieKouActivity"/>
+    tools:context=".activitys.JieKouActivity">
+
+    <TextView
+        android:id="@+id/tv"
+        android:textColor="#f00"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>
 
