@@ -18,6 +18,8 @@ public class ApiUtils {
     private static ListApi listApi;
     private static LoginApi loginApi;
     private static UserInfoApi userInfoApi;
+    private static NewsList newsList;
+    private static NewsInfo newsInfo;
 
     public static XianPaoApi getXianPaoApi() {
         if (xianPaoApi == null) {
@@ -70,6 +72,19 @@ public class ApiUtils {
             userInfoApi = RetrofitUtils.get().retrofit().create(UserInfoApi.class);
         }
         return userInfoApi;
+    }
+
+    public static NewsList getNewsListApi() {
+        if (newsList == null) {
+            newsList = RetrofitUtils.get().retrofit().create(NewsList.class);
+        }
+        return newsList;
+    }
+    public static NewsInfo getNewsinfoApi() {
+        if (newsInfo == null) {
+            newsInfo = RetrofitUtils.get().retrofit().create(NewsInfo.class);
+        }
+        return newsInfo;
     }
 
 }

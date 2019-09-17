@@ -47,8 +47,8 @@ public class SwitchBGUtils {
             case "飞鸽通话": //飞鸽通话
 
                 break;
-            case "三眼蛙资讯": //三眼蛙资讯
-
+            case "news": //三眼蛙资讯
+                Glide.with(App.getContext()).load(R.mipmap.zhuanqq).into(imageView);
                 break;
             case "相声小品": //相声小品
 

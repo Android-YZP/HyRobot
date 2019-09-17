@@ -24,12 +24,14 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
         TextView textView  = findViewById(R.id.tv);
         textView.setText(Html.fromHtml(string));
 
-        Logger.e(textView.getText().toString());
+//        Logger.e(textView.getText().toString());
     }
 
     @Override
     protected void initData() {
 
+
+        mRobotPresenter.HttpRandomGetInformationByContentType();
 
 //        mRobotPresenter.HttpList();
 //        AppUtils.installAppSilent("");
@@ -38,7 +40,7 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 //        mRobotPresenter.HttpUserInfo();
 //        mRobotPresenter.HttpLogin();
 //        mRobotPresenter.HttpChangeVersion();
-//        mRobotPresenter.HttpXianPao();
+        mRobotPresenter.HttpXianPao();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 
     @Override
     public void LoadingXianPaoDataSuccess(String result) {
-        Logger.e(result);
+        Logger.json(result);
 
     }
 
@@ -81,7 +83,7 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
 
     @Override
     public void LoadingSanYanDataSuccess(String result) {
-        Logger.e(result);
+        Logger.json(result);
     }
 
     @Override

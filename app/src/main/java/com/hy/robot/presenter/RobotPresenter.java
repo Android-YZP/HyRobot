@@ -315,5 +315,81 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
         HttpRxObservable.getObservable(ApiUtils.getLevelUpApi().levelup(request), getActivity()).subscribe(httpRxObserver);
     }
 
+    /**
+     * 获取咨询列表
+     */
+    public void HttpRandomGetInformationByContentType() {
+
+        //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
+        Map<String, Object> request = HttpRequest.getRequest();
+        request.put("contentType", "15");
+
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpRandomGetInformationByContentType") {
+
+            @Override
+            protected void onStart(Disposable d) {
+                if (getView() != null)
+                    getView().LoadingData();
+            }
+
+            @Override
+            protected void onError(ApiException e) {
+                Logger.e(e.toString() + "");
+                if (getView() != null) {
+                    getView().LoadingDataFail(e.getMsg());
+                    UIUtils.showTip(e.getMsg());
+                }
+
+            }
+
+            @Override
+            protected void onSuccess(Object response) {
+                if (getView() != null)
+                    getInformationById();
+
+            }
+        };
+
+        HttpRxObservable.getObservable(ApiUtils.getNewsListApi().getNewsList(request), getActivity()).subscribe(httpRxObserver);
+    }
+
+    /**
+     * 获取咨询列表
+     */
+    private void getInformationById() {
+
+        //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
+        Map<String, Object> request = HttpRequest.getRequest();
+        request.put("id", "4191");
+
+        HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "getInformationById") {
+
+            @Override
+            protected void onStart(Disposable d) {
+                if (getView() != null)
+                    getView().LoadingData();
+            }
+
+            @Override
+            protected void onError(ApiException e) {
+                Logger.e(e.toString() + "");
+                if (getView() != null) {
+                    getView().LoadingDataFail(e.getMsg());
+                    UIUtils.showTip(e.getMsg());
+                }
+
+            }
+
+            @Override
+            protected void onSuccess(Object response) {
+                if (getView() != null)
+                    getView().LoadingSanYanDataSuccess(response.toString());
+
+            }
+        };
+
+        HttpRxObservable.getObservable(ApiUtils.getNewsinfoApi().getNewsInfo(request), getActivity()).subscribe(httpRxObserver);
+    }
+
 
 }
