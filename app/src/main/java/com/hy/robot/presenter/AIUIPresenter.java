@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Base64;
+
 import com.com1075.library.base.BasePresenter;
 import com.hy.robot.MainActivity;
 import com.hy.robot.bean.MessageWrap;
@@ -21,9 +22,11 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SynthesizerListener;
 import com.orhanobut.logger.Logger;
+
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -233,11 +236,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
         @Override
         public void onSpeakBegin() {
-            Logger.e("开始播放");
-            //关闭语义识别避免自己和自己对话
-            AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null);
-            mAIUIAgent.sendMessage(writeMsg);
-            getView().onSpeakBegin();
+            aiUiOff();
         }
 
         @Override
@@ -260,14 +259,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
-                Logger.e("播放完成");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (checkAIUIAgent())
-                            startVoiceNlp();
-                    }
-                }, 200);
+                aiUiOn();
                 getView().onSpeakCompleted();
             } else if (error != null) {
                 getView().error("语音合成出错");
@@ -279,36 +271,47 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         }
     };
 
+    //关闭语义理解
+    public void aiUiOn() {
+        Logger.e("播放完成");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (checkAIUIAgent())
+                    startVoiceNlp();
+            }
+        }, 200);
+    }
+
+    //开启语义理解
+    public void aiUiOff() {
+        Logger.e("开始播放");
+        //关闭语义识别避免自己和自己对话
+        AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null);
+        mAIUIAgent.sendMessage(writeMsg);
+        getView().onSpeakBegin();
+    }
+
 
     /**********************************************************************上传动态实体*********************************************************************************/
 
     private void uoLoad() {
-
         try {
             JSONObject syncSchemaJson = new JSONObject();
-
             JSONObject paramJson = new JSONObject();
             paramJson.put("id_name", "appid");
             paramJson.put("id_value", "");
             paramJson.put("res_name", "OS2451892976.test_yonghu");
-
             syncSchemaJson.put("param", paramJson);
-
             syncSchemaJson.put("data", Base64.encodeToString(uploadContacts().getBytes(), Base64.DEFAULT | Base64.NO_WRAP));
-
-
             Logger.e(syncSchemaJson.toString());
-
             // 传入的数据一定要为utf-8编码
             byte[] syncData = syncSchemaJson.toString().getBytes("utf-8");
-
             String dataTag = "data_tag_1";
             JSONObject params = new JSONObject();
             params.put("tag", dataTag);
-
             AIUIMessage syncAthenaMessage = new AIUIMessage(AIUIConstant.CMD_SYNC, AIUIConstant.SYNC_DATA_SCHEMA, 0, params.toString(), syncData);
             mAIUIAgent.sendMessage(syncAthenaMessage);
-
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {

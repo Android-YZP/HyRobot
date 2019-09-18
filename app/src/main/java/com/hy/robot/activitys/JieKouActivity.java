@@ -91,7 +91,6 @@ public class JieKouActivity extends BaseActivity implements IRobotContract {
         Logger.e(result);
         NewsBean newsBean = new Gson().fromJson(result, NewsBean.class);
         textView.setText(Html.fromHtml(newsBean.getResult().getText()));
-        EventBus.getDefault().post(MessageWrap.getInstance(textView.getText()+""));
     }
 
     @Override

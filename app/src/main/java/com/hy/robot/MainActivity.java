@@ -13,6 +13,9 @@ import com.bumptech.glide.Glide;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
 import com.hy.robot.activitys.JieKouActivity;
+import com.hy.robot.activitys.MusicActivity;
+import com.hy.robot.activitys.TrieyeNewsActivity;
+import com.hy.robot.activitys.VideoActivity;
 import com.hy.robot.bean.AiUiResultBean;
 import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.contract.IAIUIContract;
@@ -20,6 +23,7 @@ import com.hy.robot.presenter.AIUIPresenter;
 import com.hy.robot.utils.SwitchBGUtils;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
+import com.squareup.haha.perflib.Main;
 import com.umeng.message.PushAgent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,6 +48,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     protected int getContentViewId() {
         PushAgent.getInstance(this).onAppStart();
         EventBus.getDefault().register(this);
+
         return R.layout.activity_main;
     }
 
@@ -65,17 +70,21 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     public void onMessageEvent(MessageWrap event) {
         // 手机端指令
         Logger.e(event.message);
-        if (!event.message.equals("语音激活")) {
-            aiuiPresenter.speachText(Html.fromHtml(event.message).toString());
+        if (event.message.equals("stop")) {//音视频停止播放
+            aiuiPresenter.aiUiOn();
+        } else if (event.message.equals("play")) {//音视频开始播放
+            aiuiPresenter.aiUiOff();
         }
 
+
     }
-
-
     @Override
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
 //      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+//        startActivity(new Intent(MainActivity.this,VideoActivity.class));
+//        startActivity(new Intent(MainActivity.this, MusicActivity.class));
+//        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
     }
 
     @Override
@@ -106,13 +115,19 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
-            aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
-            SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
+            if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
+                startActivity(new Intent(MainActivity.this, VideoActivity.class));
+            } else {
+                aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
+            }
 
+            SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
+            aiUiResult(aiUiResultBean.getIntent().getService());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void uploadContactsSuccess() {
@@ -134,6 +149,59 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     }
 
+
+    private void aiUiResult(String service) {
+        Logger.e(service);
+        switch (service) {
+            case "weather": //天气
+
+                break;
+            case "joke": //笑话
+
+                break;
+            case "drama": //戏曲
+            case "musicX": //戏曲
+            case "crossTalk": //相声
+                startActivity(new Intent(MainActivity.this, MusicActivity.class));
+                break;
+            case "百科": //百科
+
+                break;
+            case "闲泡视频": //闲泡视频
+                startActivity(new Intent(MainActivity.this, VideoActivity.class));
+                break;
+            case "飞鸽短信": //飞鸽短信
+
+                break;
+            case "飞鸽通话": //飞鸽通话
+
+                break;
+            case "news": //三眼蛙资讯
+                startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
+                break;
+            case "相声小品": //相声小品
+
+                break;
+            case "翻译": //翻译
+
+                break;
+            case "跳舞": //跳舞
+
+                break;
+            case "待机": //待机
+
+                break;
+            case "长时间待机": //长时间待机
+
+                break;
+            case "更换角色": //更换角色
+
+                break;
+            default:
+                break;
+        }
+
+    }
 
 
     private void requestPermissions() {

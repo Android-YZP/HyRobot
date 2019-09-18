@@ -35,4 +35,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    // 导入腾讯云 SDK aar
+    implementation(name: 'LiteAVSDK_Professional_6.6.7458', ext: 'aar')
 }

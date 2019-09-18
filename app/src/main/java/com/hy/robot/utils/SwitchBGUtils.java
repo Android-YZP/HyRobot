@@ -54,9 +54,7 @@ public class SwitchBGUtils {
                 break;
             case "news": //三眼蛙资讯
                 Glide.with(App.getContext()).load(R.mipmap.zhuanqq).into(imageView);
-                Intent intent = new Intent(App.getContext(), JieKouActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+
                 break;
             case "相声小品": //相声小品
 
