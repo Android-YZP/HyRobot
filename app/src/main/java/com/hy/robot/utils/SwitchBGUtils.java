@@ -3,11 +3,16 @@ package com.hy.robot.utils;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.hy.robot.App;
+import com.hy.robot.MainActivity;
 import com.hy.robot.R;
+import com.hy.robot.activitys.JieKouActivity;
+
+import static com.blankj.utilcode.util.ActivityUtils.startActivity;
 
 public class SwitchBGUtils {
     private ImageView imageView;
@@ -49,6 +54,9 @@ public class SwitchBGUtils {
                 break;
             case "news": //三眼蛙资讯
                 Glide.with(App.getContext()).load(R.mipmap.zhuanqq).into(imageView);
+                Intent intent = new Intent(App.getContext(), JieKouActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
             case "相声小品": //相声小品
 
