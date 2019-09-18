@@ -48,7 +48,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activitys.TrieyeNewsActivity"></activity>
+        <activity android:name=".activitys.MusicActivity"></activity>
+        <activity android:name=".activitys.VideoActivity" />
+        <activity android:name=".activitys.TrieyeNewsActivity" />
         <activity
             android:name=".activitys.JieKouActivity"
             android:screenOrientation="portrait" />

@@ -106,10 +106,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
-//            aiuiPresenter.speachText(Html.fromHtml(string).toString());
             aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
-            Logger.e(aiUiResultBean.getIntent().getAnswer().toString());
-
             SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
 
         } catch (Exception e) {
@@ -136,6 +133,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     public void error(String e) {
 
     }
+
 
 
     private void requestPermissions() {
