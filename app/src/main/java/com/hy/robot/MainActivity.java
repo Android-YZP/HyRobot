@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 //      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
 //        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 //        startActivity(new Intent(MainActivity.this, MusicActivity.class));
-        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
+//        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
     }
 
     @Override
@@ -119,14 +119,12 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
             if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
-            } else if (aiUiResultBean.getIntent().getService().equals("news")) {
-
-            } else {
-                aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
             }
 
+
             SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
-            aiUiResult(aiUiResultBean.getIntent().getService());
+            aiUiResult(aiUiResultBean.getIntent());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,22 +152,15 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
-    private void aiUiResult(String service) {
-        Logger.e(service);
-        switch (service) {
-            case "weather": //天气
+    private void aiUiResult(AiUiResultBean.IntentBean result) {
 
-                break;
-            case "joke": //笑话
-
-                break;
+        switch (result.getService()) {
             case "drama": //戏曲
-            case "musicX": //戏曲
             case "crossTalk": //相声
-                startActivity(new Intent(MainActivity.this, MusicActivity.class));
-                break;
-            case "百科": //百科
-
+                Intent intent = new Intent(MainActivity.this, MusicActivity.class);
+                intent.putExtra("data", new Gson().toJson(result.getData()));
+                intent.putExtra("type", result.getService());
+                startActivity(intent);
                 break;
             case "闲泡视频": //闲泡视频
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
@@ -182,12 +173,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                 break;
             case "news": //三眼蛙资讯
                 startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
-                break;
-            case "相声小品": //相声小品
-
-                break;
-            case "翻译": //翻译
-
                 break;
             case "跳舞": //跳舞
 
@@ -202,6 +187,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
                 break;
             default:
+                aiuiPresenter.speachText(result.getAnswer().getText());
                 break;
         }
 

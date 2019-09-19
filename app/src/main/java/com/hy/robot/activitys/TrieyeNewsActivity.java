@@ -117,7 +117,7 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     @Override
     public void LoadingNewsDataSuccess(String result) {
         NewsBean newsBean = new Gson().fromJson(result, NewsBean.class);
-        if (i == 0) {
+        if (i == 1) {
             speachText("以下内容由三眼蛙资讯栏目提供。。。。" + newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
         } else {
             speachText(newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
