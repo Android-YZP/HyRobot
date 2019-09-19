@@ -65,8 +65,7 @@ public class NewsPresenter extends BasePresenter<INewsContract, BaseActivity2> {
             @Override
             protected void onSuccess(Object response) {
                 if (getView() != null)
-                    getInformationById();
-
+                    getView().LoadingDataSuccess(response.toString());
             }
         };
 
@@ -76,11 +75,11 @@ public class NewsPresenter extends BasePresenter<INewsContract, BaseActivity2> {
     /**
      * 获取咨询列表
      */
-    private void getInformationById() {
+    public void getInformationById(String id) {
 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
         Map<String, Object> request = HttpRequest.getRequest();
-        request.put("id", "4191");
+        request.put("id", id);
 
         HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "getInformationById") {
 
@@ -103,8 +102,7 @@ public class NewsPresenter extends BasePresenter<INewsContract, BaseActivity2> {
             @Override
             protected void onSuccess(Object response) {
                 if (getView() != null)
-                    getView().LoadingDataSuccess(response.toString());
-
+                    getView().LoadingNewsDataSuccess(response.toString());
             }
         };
 

@@ -9,9 +9,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.com1075.library.base.BaseActivity2;
+import com.google.gson.Gson;
 import com.hy.robot.R;
 import com.hy.robot.adapter.VideoAdapter;
 import com.hy.robot.bean.MessageWrap;
+import com.hy.robot.bean.XianPaoBean;
+import com.hy.robot.contract.IVideoContract;
+import com.hy.robot.presenter.VideoPresenter;
 import com.orhanobut.logger.Logger;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
@@ -23,46 +28,61 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class VideoActivity extends Activity {
+public class VideoActivity extends BaseActivity2 implements IVideoContract {
     private static final int VIDEO_MAX_VALUE = 5;
     private ViewPager mVpVideo;
-    ArrayList<String> mData = new ArrayList<>();
     private TXCloudVideoView mVideo;
     private TXVodPlayer mLivePlayer;
+    private VideoPresenter mVideoPresenter = new VideoPresenter(this, this);
+    private List<XianPaoBean.ResultBean> mData;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        mLivePlayer.stopPlay(true); // true 代表清除最后一帧画面
+        mVideo.onDestroy();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getContentViewId() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_video);
         EventBus.getDefault().register(this);
-        init();
-        initListenter();
+        return R.layout.activity_video;
     }
 
-
-    private void initListenter() {
-
-    }
-
-    private void init() {
-
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-        mData.add("fjiorjngioreog");
-
+    @Override
+    protected void initView() {
         mVpVideo = findViewById(R.id.vp_video);
-        VideoAdapter videoAdapter = new VideoAdapter(VideoActivity.this, mData);
-        mVpVideo.setAdapter(videoAdapter);
-        mVpVideo.setRotation(90);
+        mVideo = findViewById(R.id.video_view);
+
+    }
+
+    @Override
+    protected void initData() {
+        mVideoPresenter.HttpXianPao();
+
+
+        //创建 player 对象
+        mLivePlayer = new TXVodPlayer(VideoActivity.this);
+        //关键 player 对象与界面 view
+        mLivePlayer.setPlayerView(mVideo);
+        //设置填充模式
+        mLivePlayer.setRenderMode(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION);
+        // 设置画面渲染方向
+        mLivePlayer.setRenderRotation(TXLiveConstants.RENDER_ROTATION_PORTRAIT);
+
+
+    }
+
+    @Override
+    protected void setListener() {
+
         mVpVideo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -71,7 +91,7 @@ public class VideoActivity extends Activity {
 
             @Override
             public void onPageSelected(int i) {
-                String flvUrl = "http://1253520711.vod2.myqcloud.com/3035299avodgzp1253520711/a521da7d5285890789069346663/6QCSEoJDCOIA.mp4";
+                String flvUrl = mData.get(i).getVideopath() + "";
 //                mLivePlayer.startPlay(flvUrl, TXLivePlayer.PLAY_TYPE_VOD_MP4);
                 mLivePlayer.startPlay(flvUrl);
             }
@@ -83,24 +103,10 @@ public class VideoActivity extends Activity {
         });
 
 
-
-        mVideo = findViewById(R.id.video_view);
-        //创建 player 对象
-        mLivePlayer = new TXVodPlayer(VideoActivity.this);
-        //关键 player 对象与界面 view
-        mLivePlayer.setPlayerView(mVideo);
-        String flvUrl = "http://1253520711.vod2.myqcloud.com/3035299avodgzp1253520711/a521da7d5285890789069346663/6QCSEoJDCOIA.mp4";
-        mLivePlayer.startPlay(flvUrl);
-        //Android 示例代码
-
-        // 设置填充模式
-        mLivePlayer.setRenderMode(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION);
-        // 设置画面渲染方向
-        mLivePlayer.setRenderRotation(TXLiveConstants.RENDER_ROTATION_PORTRAIT);
         mLivePlayer.setPlayListener(new ITXLivePlayListener() {
             @Override
             public void onPlayEvent(int event, Bundle param) {
-                Logger.e(event+"");
+                Logger.i(event + "");
                 if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
                     Logger.e("[AnswerRoom] 拉流失败：网络断开");
                     Logger.e("网络断开，拉流失败");
@@ -124,14 +130,6 @@ public class VideoActivity extends Activity {
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        mLivePlayer.stopPlay(true); // true 代表清除最后一帧画面
-        mVideo.onDestroy();
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageWrap event) {
@@ -139,4 +137,29 @@ public class VideoActivity extends Activity {
             finish();
         }
     }
+
+    @Override
+    public void LoadingData() {
+
+    }
+
+    @Override
+    public void LoadingDataFail(String result) {
+
+    }
+
+    @Override
+    public void LoadingDataSuccess(String result) {
+        Logger.e(result + "");
+        XianPaoBean xianPaoBean = new Gson().fromJson(result, XianPaoBean.class);
+        mData = xianPaoBean.getResult();
+        VideoAdapter videoAdapter = new VideoAdapter(VideoActivity.this, this.mData);
+
+        mVpVideo.setAdapter(videoAdapter);
+        mVpVideo.setRotation(90);
+
+        String flvUrl = mData.get(0).getVideopath();
+        mLivePlayer.startPlay(flvUrl);
+    }
+
 }

@@ -16,8 +16,10 @@ import com.google.gson.Gson;
 import com.hy.robot.R;
 import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.bean.NewsBean;
+import com.hy.robot.bean.NewsListBean;
 import com.hy.robot.contract.INewsContract;
 import com.hy.robot.presenter.NewsPresenter;
+import com.hy.robot.utils.UIUtils;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -30,6 +32,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
 
     private NewsPresenter mRobotPresenter = new NewsPresenter(this, this);
@@ -38,6 +43,8 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     private SpeechSynthesizer mTts;
     // 默认发音人
     private String voicer = "xiaoyan";
+    private List<NewsListBean.ResultBean> mResultBeans = new ArrayList<>();
+    private int i = 0;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -100,8 +107,22 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     @Override
     public void LoadingDataSuccess(String result) {
         Logger.e(result);
+        NewsListBean newsListBean = new Gson().fromJson(result, NewsListBean.class);
+        mResultBeans = UIUtils.chooseNewsList(newsListBean.getResult());
+        mRobotPresenter.getInformationById(mResultBeans.get(i++).getId() + "");
+
+
+    }
+
+    @Override
+    public void LoadingNewsDataSuccess(String result) {
         NewsBean newsBean = new Gson().fromJson(result, NewsBean.class);
-        speachText(Html.fromHtml(newsBean.getResult().getText()) + "");
+        if (i == 0) {
+            speachText("以下内容由三眼蛙资讯栏目提供。。。。" + newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
+        } else {
+            speachText(newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
+        }
+
     }
 
 
@@ -182,6 +203,9 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
 
         @Override
         public void onCompleted(SpeechError error) {
+            if (i == 4) TrieyeNewsActivity.this.finish();
+            mRobotPresenter.getInformationById(mResultBeans.get(i++).getId() + "");
+            Logger.e("onCompleted"+mResultBeans.get(i).getId());
         }
 
         @Override

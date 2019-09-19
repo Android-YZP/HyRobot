@@ -5,6 +5,13 @@
     android:background="#00000000">
 
 
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_video"
+        android:layout_centerInParent="true"
+        android:layout_width="400dp"
+        android:layout_height="200dp"/>
+
+
     <RelativeLayout
         android:layout_width="200dp"
         android:layout_height="400dp"
@@ -19,17 +26,5 @@
 
 
     </RelativeLayout>
-
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp_video"
-        android:layout_centerInParent="true"
-        android:layout_width="400dp"
-        android:layout_height="200dp"/>
-
-
-
-
-
 
 </RelativeLayout>

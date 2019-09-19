@@ -78,13 +78,14 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
 
     }
+
     @Override
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
 //      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
-//        startActivity(new Intent(MainActivity.this,VideoActivity.class));
+//        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 //        startActivity(new Intent(MainActivity.this, MusicActivity.class));
-//        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
+        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
     }
 
     @Override
@@ -115,8 +116,11 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
+
             if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
+            } else if (aiUiResultBean.getIntent().getService().equals("news")) {
+
             } else {
                 aiuiPresenter.speachText(aiUiResultBean.getIntent().getAnswer().getText());
             }
