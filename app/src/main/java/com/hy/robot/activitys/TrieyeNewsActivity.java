@@ -82,6 +82,7 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
         int newsTotlePage = (int) SharedPreferencesUtils.getParam(TrieyeNewsActivity.this, "totalPage", 1);
         int newsPage = (int) SharedPreferencesUtils.getParam(TrieyeNewsActivity.this, "NewsPage", 1);
         Logger.e(newsTotlePage + "," + newsPage);
+
         if (newsPage < newsTotlePage) {
             mPage = newsPage + 1;
         } else {
@@ -113,7 +114,13 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     public void LoadingDataSuccess(String result) {
         Logger.e(result);
         NewsListBean newsListBean = new Gson().fromJson(result, NewsListBean.class);
-        mRobotPresenter.getInformationById(newsListBean.getResult().get(i++).getId() + "");
+        mResultBeans = newsListBean.getResult();
+        if (mResultBeans.size() == 0){
+            mRobotPresenter.HttpRandomGetInformationByContentType(1 + "");
+            return;
+        }
+
+        mRobotPresenter.getInformationById(mResultBeans.get(i++).getId() + "");
 
         SharedPreferencesUtils.setParam(App.getContext(), "totalPage", newsListBean.getPage().getTotalPage());
         SharedPreferencesUtils.setParam(App.getContext(), "NewsPage", newsListBean.getPage().getPage());
@@ -126,7 +133,7 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
         if (i == 1) {
             speachText("以下内容由三眼蛙资讯栏目提供。。。。" + newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
         } else {
-            speachText(newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
+            speachText("/n...."+newsBean.getResult().getTitle() + "。。。。" + Html.fromHtml(newsBean.getResult().getText()) + "");
         }
 
     }
