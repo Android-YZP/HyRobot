@@ -1,25 +1,21 @@
 package com.hy.robot.activitys;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
 import android.view.WindowManager;
-
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
-import com.com1075.library.base.BaseActivity;
 import com.com1075.library.base.BaseActivity2;
 import com.google.gson.Gson;
+import com.hy.robot.App;
 import com.hy.robot.R;
 import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.bean.NewsBean;
 import com.hy.robot.bean.NewsListBean;
 import com.hy.robot.contract.INewsContract;
 import com.hy.robot.presenter.NewsPresenter;
-import com.hy.robot.utils.UIUtils;
+import com.hy.robot.utils.SharedPreferencesUtils;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -27,11 +23,9 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SynthesizerListener;
 import com.orhanobut.logger.Logger;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +39,7 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     private String voicer = "xiaoyan";
     private List<NewsListBean.ResultBean> mResultBeans = new ArrayList<>();
     private int i = 0;
+    private int mPage = 1;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -84,7 +79,17 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        mRobotPresenter.HttpRandomGetInformationByContentType();
+        int newsTotlePage = (int) SharedPreferencesUtils.getParam(TrieyeNewsActivity.this, "totalPage", 1);
+        int newsPage = (int) SharedPreferencesUtils.getParam(TrieyeNewsActivity.this, "NewsPage", 1);
+        Logger.e(newsTotlePage + "," + newsPage);
+        if (newsPage < newsTotlePage) {
+            mPage = newsPage + 1;
+        } else {
+            mPage = 1;
+        }
+
+
+        mRobotPresenter.HttpRandomGetInformationByContentType(mPage + "");
         startSpeaker();
     }
 
@@ -108,9 +113,10 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
     public void LoadingDataSuccess(String result) {
         Logger.e(result);
         NewsListBean newsListBean = new Gson().fromJson(result, NewsListBean.class);
-        mResultBeans = UIUtils.chooseNewsList(newsListBean.getResult());
-        mRobotPresenter.getInformationById(mResultBeans.get(i++).getId() + "");
+        mRobotPresenter.getInformationById(newsListBean.getResult().get(i++).getId() + "");
 
+        SharedPreferencesUtils.setParam(App.getContext(), "totalPage", newsListBean.getPage().getTotalPage());
+        SharedPreferencesUtils.setParam(App.getContext(), "NewsPage", newsListBean.getPage().getPage());
 
     }
 
@@ -205,7 +211,7 @@ public class TrieyeNewsActivity extends BaseActivity2 implements INewsContract {
         public void onCompleted(SpeechError error) {
             if (i == 4) TrieyeNewsActivity.this.finish();
             mRobotPresenter.getInformationById(mResultBeans.get(i++).getId() + "");
-            Logger.e("onCompleted"+mResultBeans.get(i).getId());
+            Logger.e("onCompleted" + mResultBeans.get(i).getId());
         }
 
         @Override

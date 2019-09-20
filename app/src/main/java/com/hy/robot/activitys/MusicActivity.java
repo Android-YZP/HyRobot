@@ -29,7 +29,6 @@ public class MusicActivity extends BaseActivity2 {
     private TXVodPlayer mLivePlayer;
     private int i = 0;
     private CrossTalkBean mCrossTalkBean;
-    private String type;
 
     @Override
     public void onDestroy() {
@@ -60,14 +59,8 @@ public class MusicActivity extends BaseActivity2 {
         //"http://od.open.qingting.fm/m4a/5800f3f87cb891101aeb0c1a_6108239_64.m4a?u=786&channelId=187352&programId=5640081"
 
         String data = getIntent().getStringExtra("data");
-        type = getIntent().getStringExtra("type");
-        if (type.equals("drama")) {
-            Logger.e("戏曲" + data);
-
-        } else if (type.equals("crossTalk")) {
-            Logger.e("相声" + data);
-            mCrossTalkBean = new Gson().fromJson(data, CrossTalkBean.class);
-        }
+        Logger.e(data);
+        mCrossTalkBean = new Gson().fromJson(data, CrossTalkBean.class);
 
 
         //创建 player 对象
@@ -98,19 +91,19 @@ public class MusicActivity extends BaseActivity2 {
 
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_LOADING) {//视频播放进入缓冲状态，缓冲结束之后会有 PLAY_BEGIN 事件
 
+                    findViewById(R.id.image).setVisibility(View.VISIBLE);
+
+
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {//视频播放开始，如果您自己做 loading，会需要它
+
+
+                    findViewById(R.id.image).setVisibility(View.GONE);
 
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_END) {//播放结束，HTTP-FLV 的直播流是不抛这个事件的
                     Logger.e("TXLiveConstants.PLAY_EVT_PLAY_END");
-
-                        if (type.equals("crossTalk")){
-                            if (i == mCrossTalkBean.getResult().size()) MusicActivity.this.finish();
-                            String flvUrl = mCrossTalkBean.getResult().get(i++).getUrl();
-                            mLivePlayer.startPlay(flvUrl);
-                        }
-
-
-
+                    if (i == mCrossTalkBean.getResult().size()) MusicActivity.this.finish();
+                    String flvUrl = mCrossTalkBean.getResult().get(i++).getUrl();
+                    mLivePlayer.startPlay(flvUrl);
                 }
             }
 
@@ -121,20 +114,19 @@ public class MusicActivity extends BaseActivity2 {
         });
 
 
-
-
         findViewById(R.id.image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (type.equals("crossTalk")){
-
-
-                    if (i == mCrossTalkBean.getResult().size()-1) MusicActivity.this.finish();
-
-                    String flvUrl = mCrossTalkBean.getResult().get(i++).getUrl();
-                    Logger.e(i+"======"+flvUrl);
-                    mLivePlayer.startPlay(flvUrl);
-                }
+//                if (type.equals("crossTalk")){
+//
+//
+//                    if (i == mCrossTalkBean.getResult().size()-1) MusicActivity.this.finish();
+//
+//                    String flvUrl = mCrossTalkBean.getResult().get(i++).getUrl();
+//                    Logger.e(i+"======"+flvUrl);
+//                    mLivePlayer.startPlay(flvUrl);
+//                }
+                mLivePlayer.seek(mLivePlayer.getDuration() - 10.0f);
             }
         });
     }

@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.com1075.library.base.BaseActivity2;
@@ -67,7 +68,6 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
     protected void initData() {
         mVideoPresenter.HttpXianPao();
 
-
         //创建 player 对象
         mLivePlayer = new TXVodPlayer(VideoActivity.this);
         //关键 player 对象与界面 view
@@ -113,8 +113,9 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
 
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_LOADING) {//视频播放进入缓冲状态，缓冲结束之后会有 PLAY_BEGIN 事件
 
-                } else if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {//视频播放开始，如果您自己做 loading，会需要它
 
+                } else if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {//视频播放开始，如果您自己做 loading，会需要它
+                    findViewById(R.id.image).setVisibility(View.GONE);
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_END) {//播放结束，HTTP-FLV 的直播流是不抛这个事件的
                     if (mVpVideo.getCurrentItem() >= VIDEO_MAX_VALUE) finish();
                     mVpVideo.setCurrentItem(mVpVideo.getCurrentItem() + 1);
@@ -140,7 +141,7 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
 
     @Override
     public void LoadingData() {
-
+        findViewById(R.id.image).setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -6,13 +6,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.text.Html;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
-import com.hy.robot.activitys.JieKouActivity;
 import com.hy.robot.activitys.MusicActivity;
 import com.hy.robot.activitys.TrieyeNewsActivity;
 import com.hy.robot.activitys.VideoActivity;
@@ -23,9 +20,7 @@ import com.hy.robot.presenter.AIUIPresenter;
 import com.hy.robot.utils.SwitchBGUtils;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
-import com.squareup.haha.perflib.Main;
 import com.umeng.message.PushAgent;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -85,7 +80,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 //      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
 //        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 //        startActivity(new Intent(MainActivity.this, MusicActivity.class));
-//        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
+        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
     }
 
     @Override
@@ -116,13 +111,13 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
+            SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
 
             if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
+                return;
             }
 
-
-            SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
             aiUiResult(aiUiResultBean.getIntent());
 
         } catch (Exception e) {

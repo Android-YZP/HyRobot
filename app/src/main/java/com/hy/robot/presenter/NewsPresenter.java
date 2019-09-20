@@ -38,11 +38,14 @@ public class NewsPresenter extends BasePresenter<INewsContract, BaseActivity2> {
     /**
      * 获取咨询列表
      */
-    public void HttpRandomGetInformationByContentType() {
+    public void HttpRandomGetInformationByContentType(String page) {
 
         //构建请求数据https://xianpaotv.com/video/api/video/randList {currentUid=48976, count=20, page=1}
         Map<String, Object> request = HttpRequest.getRequest();
-        request.put("contentType", "15");
+        request.put("sourceNum", "100001");
+        request.put("page", page);
+        request.put("count", "5");
+        request.put("templateType", "3");
 
         HttpRxObserver httpRxObserver = new HttpRxObserver(TAG + "HttpRandomGetInformationByContentType") {
 

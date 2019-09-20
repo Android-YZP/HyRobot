@@ -36,6 +36,13 @@ public class HttpResponse {
     @SerializedName("result")
     private Object result;
 
+
+    /**
+     * 页数
+     */
+    @SerializedName("page")
+    private Object page;
+
     /**
      * 是否成功(这里约定0)
      *
@@ -48,9 +55,9 @@ public class HttpResponse {
     public String toString() {
         String response = "";
         if (data == null) {
-            response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"result\":" + new Gson().toJson(result) + "}";
+            response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"result\":" + new Gson().toJson(result) + ",\"page\":" + new Gson().toJson(page) + "}";
         } else {
-            response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"data\":" + new Gson().toJson(data) + "}";
+            response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"data\":" + new Gson().toJson(data) + ",\"page\":" + new Gson().toJson(page) + "}";
 
         }
         return response;
@@ -88,5 +95,13 @@ public class HttpResponse {
 
     public void setResult(Object result) {
         this.result = result;
+    }
+
+    public Object getPage() {
+        return page;
+    }
+
+    public void setPage(Object page) {
+        this.page = page;
     }
 }
