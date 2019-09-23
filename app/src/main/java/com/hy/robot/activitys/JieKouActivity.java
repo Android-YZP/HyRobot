@@ -5,13 +5,10 @@ import android.widget.TextView;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
 import com.hy.robot.R;
-import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.bean.NewsBean;
 import com.hy.robot.contract.IRobotContract;
 import com.hy.robot.presenter.RobotPresenter;
 import com.orhanobut.logger.Logger;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class JieKouActivity extends BaseActivity implements IRobotContract {
 

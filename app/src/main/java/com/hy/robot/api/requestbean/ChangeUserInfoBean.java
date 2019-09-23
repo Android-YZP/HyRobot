@@ -27,8 +27,17 @@ public class ChangeUserInfoBean {
     private String avator3d;
     private String notice;
     private String mobile_token;
-    private String device_token;
+    private String deviceToken;
     private String version;
+    private String device;
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
 
     public String getWeight() {
         return weight;
@@ -111,11 +120,11 @@ public class ChangeUserInfoBean {
     }
 
     public String getDevice_token() {
-        return device_token;
+        return deviceToken;
     }
 
     public void setDevice_token(String device_token) {
-        this.device_token = device_token;
+        this.deviceToken = device_token;
     }
 
     public String getVersion() {

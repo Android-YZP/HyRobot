@@ -10,6 +10,7 @@ import com.hy.robot.api.ApiUtils;
 import com.hy.robot.api.requestbean.ChangeUserInfoBean;
 import com.hy.robot.api.requestbean.LoginBean;
 import com.hy.robot.contract.IRobotContract;
+import com.hy.robot.utils.SharedPreferencesUtils;
 import com.hy.robot.utils.UIUtils;
 import com.orhanobut.logger.Logger;
 
@@ -150,7 +151,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             }
         };
 
-        HttpRxObservable.getObservable(ApiUtils.getUserInfoApi().userInfo(request), getActivity()).subscribe(httpRxObserver);
+        HttpRxObservable.getObservable(ApiUtils.getUserInfoApi().userInfo(request, SharedPreferencesUtils.getToken()), getActivity()).subscribe(httpRxObserver);
     }
 
 
@@ -234,7 +235,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             }
         };
 
-        HttpRxObservable.getObservable(ApiUtils.getChangeUserInfoApi().changeUserinfo(changeUserInfoBean), getActivity()).subscribe(httpRxObserver);
+        HttpRxObservable.getObservable(ApiUtils.getChangeUserInfoApi().changeUserinfo(changeUserInfoBean,SharedPreferencesUtils.getToken()), getActivity()).subscribe(httpRxObserver);
     }
 
 
@@ -273,7 +274,7 @@ public class RobotPresenter extends BasePresenter<IRobotContract, BaseActivity> 
             }
         };
 
-        HttpRxObservable.getObservable(ApiUtils.getChangeVersionApi().changeVersion(request), getActivity()).subscribe(httpRxObserver);
+        HttpRxObservable.getObservable(ApiUtils.getChangeVersionApi().changeVersion(request,SharedPreferencesUtils.getToken()), getActivity()).subscribe(httpRxObserver);
     }
 
 

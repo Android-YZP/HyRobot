@@ -76,23 +76,11 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageWrap event) {
-        // 手机端指令
-        Logger.e(event.message);
-        if (event.message.equals("stop")) {//音视频停止播放
-            aiuiPresenter.aiUiOn();
-        } else if (event.message.equals("play")) {//音视频开始播放
-            aiuiPresenter.aiUiOff();
-        }
-
-
-    }
 
     @Override
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
-      startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+        startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
 //        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 //        startActivity(new Intent(MainActivity.this, MusicActivity.class));
 //        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
@@ -142,6 +130,23 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageWrap event) {
+        // 手机端指令
+        Logger.e(event.message);
+        if (event.message.equals("stop")) {//音视频停止播放
+            aiuiPresenter.aiUiOn();
+        } else if (event.message.equals("play")) {//音视频开始播放
+            aiuiPresenter.aiUiOff();
+        }
+
+        if (event.type.equals("read")) {
+            aiuiPresenter.speachText(event.message);
+        }
+
+
     }
 
 

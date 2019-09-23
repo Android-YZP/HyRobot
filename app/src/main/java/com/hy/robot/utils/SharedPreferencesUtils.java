@@ -3,6 +3,8 @@ package com.hy.robot.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.hy.robot.App;
+
 public class SharedPreferencesUtils {
 
     /**
@@ -62,6 +64,15 @@ public class SharedPreferencesUtils {
         }
 
         return null;
+    }
+    /**
+     *
+     * @return
+     */
+    public static String getToken( ) {
+        SharedPreferences sp = App.getContext().getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        String loginToken = sp.getString("LoginToken", "");
+        return loginToken;
     }
 
     /**

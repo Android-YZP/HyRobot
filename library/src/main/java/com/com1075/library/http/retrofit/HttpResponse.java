@@ -2,6 +2,7 @@ package com.com1075.library.http.retrofit;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.orhanobut.logger.Logger;
 
 /**
  * http响应参数实体类
@@ -54,9 +55,12 @@ public class HttpResponse {
 
     public String toString() {
         String response = "";
+
         if (data == null) {
+
             response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"result\":" + new Gson().toJson(result) + ",\"page\":" + new Gson().toJson(page) + "}";
         } else {
+
             response = "{\"code\": " + code + ",\"msg\":" + "\"" + msg + "\"" + ",\"data\":" + new Gson().toJson(data) + ",\"page\":" + new Gson().toJson(page) + "}";
 
         }

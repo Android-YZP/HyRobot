@@ -2,8 +2,12 @@ package com.hy.robot;
 import android.app.Notification;
 import android.content.Context;
 import android.widget.Toast;
+
+import androidx.multidex.MultiDex;
+
 import com.com1075.library.base.BaseApplication;
 import com.hy.robot.bean.MessageWrap;
+import com.hy.robot.utils.SharedPreferencesUtils;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.orhanobut.logger.Logger;
@@ -21,11 +25,15 @@ public class App extends BaseApplication {
 
     private static Context context;
 
+    private static String LoginToken;
+
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
 
+
+        MultiDex.install(this);
 
         // 注意： appid 必须和下载的SDK保持一致，否则会出现10407错误
         StringBuffer param = new StringBuffer();
@@ -49,6 +57,7 @@ public class App extends BaseApplication {
             @Override
             public void onSuccess(String deviceToken) {
                 Logger.e("注册成功：deviceToken：-------->  " + deviceToken);
+                SharedPreferencesUtils.setParam(getContext(),"deviceToken",deviceToken);
             }
 
             @Override
@@ -81,5 +90,12 @@ public class App extends BaseApplication {
 
     public static Context getContext() {
         return context;
+    }
+    public static String getLoginToken() {
+        return LoginToken;
+    }
+
+    public static void setLoginToken(String loginToken) {
+        LoginToken = loginToken;
     }
 }

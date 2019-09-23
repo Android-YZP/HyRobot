@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hy.robot.App;
@@ -109,5 +112,20 @@ public class UIUtils {
 //        return false;
 //    }
 
+    /**
+     * 返回当前程序版本号
+     */
+    public static String getAppVersionCode() {
+        int versioncode = 0;
+        try {
+            PackageManager pm = App.getContext().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(App.getContext().getPackageName(), 0);
+            // versionName = pi.versionName;
+            versioncode = pi.versionCode;
+        } catch (Exception e) {
+            Log.e("VersionInfo", "Exception", e);
+        }
+        return versioncode + "";
+    }
 
 }
