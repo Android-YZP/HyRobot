@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.NetworkUtils;
+import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
@@ -121,6 +122,7 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (handler == null)return;
                 Message message = new Message();
                 message.what = 101;
                 handler.sendMessage(message);
@@ -148,15 +150,14 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void LoadingLoginDataSuccess(String data) {//拉取个人信息，修改个人信息，修改版本号
         Logger.e(data);
         LoginBean loginBean = new Gson().fromJson(data, LoginBean.class);
         String deviceToken = (String) SharedPreferencesUtils.getParam(getContext(), "deviceToken", "");
         SharedPreferencesUtils.setParam(getContext(), "LoginToken", loginBean.getData().getToken());
-        qrCodePresenter.HttpChangeUserinfo(deviceToken, DeviceUtils.getAndroidID(), loginBean.getData().getToken());
-
-
+        qrCodePresenter.HttpChangeUserinfo(deviceToken, PhoneUtils.getIMEI(), loginBean.getData().getToken());
     }
 
     @Override
@@ -175,7 +176,7 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
         //保存下来个人信息
         SharedPreferencesUtils.setParam(App.getContext(), "UserInfo", result);
 //        UserInfoBean userInfoBean = new Gson().fromJson(result, UserInfoBean.class);
-        EventBus.getDefault().post(MessageWrap.getInstance2("设备绑定成功","read"));
+        EventBus.getDefault().post(MessageWrap.getInstance2("您好，初次见面，请多多指教", "read"));
         finish();
 
     }

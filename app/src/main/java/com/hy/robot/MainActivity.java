@@ -15,6 +15,7 @@ import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
@@ -23,7 +24,9 @@ import com.hy.robot.activitys.QRCodeActivity;
 import com.hy.robot.activitys.TrieyeNewsActivity;
 import com.hy.robot.activitys.VideoActivity;
 import com.hy.robot.bean.AiUiResultBean;
+import com.hy.robot.bean.ClockBean;
 import com.hy.robot.bean.MessageWrap;
+import com.hy.robot.bean.TimeBean;
 import com.hy.robot.contract.IAIUIContract;
 import com.hy.robot.presenter.AIUIPresenter;
 import com.hy.robot.utils.CalendarReminderUtils;
@@ -49,6 +52,9 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
      * 获取升级
      * 获取三眼咨询
      * 音频 视频  IM 每个单独一个类去解决
+     * <p>
+     * <p>
+     * 闲泡自定义技能   闹钟   推送对接
      */
 
     private AIUIPresenter aiuiPresenter = new AIUIPresenter(this, this);
@@ -94,7 +100,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         aiuiPresenter.startSpeaker();
         Glide.with(App.getContext()).load(R.mipmap.zhuanqq).into(mImageView);
 //        createAlarm("房东舒服舒服", 20, 47, 55);
-//        CalendarReminderUtils.addCalendarEvent(MainActivity.this, "ddddddddsfds", "fdsfds", System.currentTimeMillis() + 2000000, 0);
 //        Logger.e(System.currentTimeMillis() + "");
     }
 
@@ -171,6 +176,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void aiUiResult(AiUiResultBean.IntentBean result) {
 
         switch (result.getService()) {
@@ -205,6 +211,46 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
             case "更换角色": //更换角色
 
                 break;
+            case "scheduleX": //闹钟提醒
+                aiuiPresenter.speachText(result.getAnswer().getText());
+                String json = new Gson().toJson(result.getSemantic());
+                String substring = json.substring(1, json.length() - 1);
+                Logger.e(substring);
+                String content = "";
+                String datetime = "";
+                String repeat = "";
+                String name = "";
+                ClockBean clockBean = new Gson().fromJson(substring, ClockBean.class);
+                for (int i = 0; i < clockBean.getSlots().size(); i++) {
+                    if (clockBean.getSlots().get(i).getName().equals("datetime")) {
+                        TimeBean timeBean = new Gson().fromJson(clockBean.getSlots().get(i).getNormValue(), TimeBean.class);
+                        datetime = timeBean.getSuggestDatetime();
+                        Logger.e(timeBean.getSuggestDatetime());
+
+                    } else if (clockBean.getSlots().get(i).getName().equals("content")) {
+                        content = clockBean.getSlots().get(i).getValue();
+                        Logger.e(clockBean.getSlots().get(i).getValue());
+
+                    } else if (clockBean.getSlots().get(i).getName().equals("repeat")) {
+                        repeat = clockBean.getSlots().get(i).getValue();
+                        Logger.e(clockBean.getSlots().get(i).getValue());
+                    } else if (clockBean.getSlots().get(i).getName().equals("name")) {
+                        name = clockBean.getSlots().get(i).getValue();
+                        Logger.e(clockBean.getSlots().get(i).getValue());
+                    }
+                }
+                if (StringUtils.isEmpty(datetime)) return;
+                if (name.equals("reminder")) {
+                    CalendarReminderUtils.addCalendarEvent(MainActivity.this,
+                            content + "",
+                            "小飞为你提醒",
+                            datetime,
+                            10, repeat + "");
+                } else {
+                    CalendarReminderUtils.createAlarm(MainActivity.this, repeat, content, datetime, (int) System.currentTimeMillis());
+                }
+
+                break;
             default:
                 aiuiPresenter.speachText(result.getAnswer().getText());
                 break;
@@ -236,39 +282,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         aiuiPresenter.startAIUI();
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void createAlarm(String message, int hour, int minutes, int resId) {
-        ArrayList<Integer> testDays = new ArrayList<>();
-        testDays.add(Calendar.MONDAY);//周一
-        testDays.add(Calendar.TUESDAY);//周二
-        testDays.add(Calendar.FRIDAY);//周五
-        testDays.add(Calendar.FRIDAY);//周五
-
-        String packageName = getApplication().getPackageName();
-        Uri ringtoneUri = Uri.parse("android.resource://" + packageName + "/" + resId);
-
-        Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM)
-                //闹钟的小时
-                .putExtra(AlarmClock.EXTRA_HOUR, hour)
-                //闹钟的分钟
-                .putExtra(AlarmClock.EXTRA_MINUTES, minutes)
-                //响铃时提示的信息
-                .putExtra(AlarmClock.EXTRA_MESSAGE, message)
-                //用于指定该闹铃触发时是否振动
-                .putExtra(AlarmClock.EXTRA_VIBRATE, true)
-                //一个 content: URI，用于指定闹铃使用的铃声，也可指定 VALUE_RINGTONE_SILENT 以不使用铃声。
-                //如需使用默认铃声，则无需指定此 extra。
-                .putExtra(AlarmClock.EXTRA_RINGTONE, ringtoneUri)
-                //对于一次性闹铃，无需指定此 extra
-                .putExtra(AlarmClock.EXTRA_DAYS, testDays)
-                //如果为true，则调用startActivity()不会进入手机的闹钟设置界面
-                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
     }
 
 

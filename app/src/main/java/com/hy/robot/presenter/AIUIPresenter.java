@@ -136,7 +136,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
                     Logger.e("进入识别状态");
                     if (event.arg1 == 0) {//语音激活
-                        EventBus.getDefault().post(MessageWrap.getInstance("语音激活"));
+                        EventBus.getDefault().post(MessageWrap.getInstance2("语音激活","status"));
                         if (checkAIUIAgent())
                             startTextNlp("你好");
                     }

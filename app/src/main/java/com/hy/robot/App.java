@@ -78,7 +78,7 @@ public class App extends BaseApplication {
                 for (Map.Entry entry : msg.extra.entrySet()) {
                     Object key = entry.getKey();
                     Object value = entry.getValue();
-                    EventBus.getDefault().post(MessageWrap.getInstance(value+""));
+                    EventBus.getDefault().post(MessageWrap.getInstance2(value+"","order"));
                     Logger.e("自定义数值：-------->  " + "key:" + key + ",value:" + value);
                 }
                 return super.getNotification(context, msg);
