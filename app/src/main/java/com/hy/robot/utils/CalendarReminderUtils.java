@@ -1,6 +1,5 @@
 package com.hy.robot.utils;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,13 +11,10 @@ import android.os.Build;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.text.TextUtils;
-
 import androidx.annotation.RequiresApi;
-
 import com.com1075.library.base.BaseActivity;
 import com.hy.robot.App;
 import com.orhanobut.logger.Logger;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
