@@ -1,29 +1,11 @@
 package com.hy.robot.activitys;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.PhoneUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
 import com.hy.robot.App;
@@ -31,7 +13,6 @@ import com.hy.robot.R;
 import com.hy.robot.bean.LoginBean;
 import com.hy.robot.bean.MessageWrap;
 import com.hy.robot.bean.QRCodeBean;
-import com.hy.robot.bean.UserInfoBean;
 import com.hy.robot.contract.IQRCodeContract;
 import com.hy.robot.presenter.QRCodePresenter;
 import com.hy.robot.utils.SharedPreferencesUtils;
@@ -39,13 +20,10 @@ import com.hy.robot.utils.WIFIConnectionManager;
 import com.orhanobut.logger.Logger;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
-
 import org.greenrobot.eventbus.EventBus;
-
 import cn.bingoogolapple.qrcode.core.BarcodeType;
 import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
-
 import static com.hy.robot.App.getContext;
 
 public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate, IQRCodeContract {
@@ -103,6 +81,7 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
     protected void onDestroy() {
         mZXingView.onDestroy(); // 销毁二维码扫描控件
         handler = null;
+        PushAgent.getInstance(App.getContext()).register(null);
         super.onDestroy();
     }
 

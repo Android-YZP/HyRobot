@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     @Override
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
-        startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+//        startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
 //        startActivity(new Intent(MainActivity.this, VideoActivity.class));
 //        startActivity(new Intent(MainActivity.this, MusicActivity.class));
 //        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
@@ -150,8 +150,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         if (event.type.equals("read")) {
             aiuiPresenter.speachText(event.message);
         }
-
-
     }
 
 
@@ -178,7 +176,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void aiUiResult(AiUiResultBean.IntentBean result) {
-
         switch (result.getService()) {
             case "drama": //戏曲
             case "crossTalk": //相声
@@ -212,6 +209,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
                 break;
             case "scheduleX": //闹钟提醒
+
                 aiuiPresenter.speachText(result.getAnswer().getText());
                 String json = new Gson().toJson(result.getSemantic());
                 String substring = json.substring(1, json.length() - 1);
