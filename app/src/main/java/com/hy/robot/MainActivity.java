@@ -15,7 +15,9 @@ import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
@@ -139,6 +141,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageWrap event) {
+
         // 手机端指令
         Logger.e(event.message);
         if (event.message.equals("stop")) {//音视频停止播放
@@ -149,6 +152,8 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
         if (event.type.equals("read")) {
             aiuiPresenter.speachText(event.message);
+        }else if (event.type.equals("Action")) {
+            ToastUtils.showLong(event.message);
         }
     }
 
@@ -268,7 +273,11 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_SETTINGS,
                             Manifest.permission.LOCATION_HARDWARE, Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.WRITE_SETTINGS, Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CONTACTS}, 0x0010);
+                            Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA,
+                            Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.READ_CALENDAR,
+                            Manifest.permission.WRITE_CALENDAR,
+                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE,
+                            Manifest.permission.READ_CONTACTS}, 0x0010);
                 }
             }
         } catch (Exception e) {
@@ -280,6 +289,10 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         aiuiPresenter.startAIUI();
+        if (!NetworkUtils.isConnected()) {
+            startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+        }
+
     }
 
 

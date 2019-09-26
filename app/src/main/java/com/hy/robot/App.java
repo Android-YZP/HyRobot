@@ -74,7 +74,7 @@ public class App extends BaseApplication {
                 //1。同步形象
                 //2。推送升级
                 //3。设备解绑的
-
+                EventBus.getDefault().post(MessageWrap.getInstance2(uMessage.custom, "Action"));
                 //升级成功的版本号
                 Logger.e("自定义数值：-------->" + uMessage.custom);
 

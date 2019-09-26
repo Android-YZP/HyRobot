@@ -107,6 +107,7 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
                 handler.sendMessage(message);
             }
         }, 2000);
+
         if (NetworkUtils.isConnected()) {
             PushAgent.getInstance(App.getContext()).register(new IUmengRegisterCallback() {
                 @Override
@@ -155,7 +156,7 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
         //保存下来个人信息
         SharedPreferencesUtils.setParam(App.getContext(), "UserInfo", result);
 //        UserInfoBean userInfoBean = new Gson().fromJson(result, UserInfoBean.class);
-        EventBus.getDefault().post(MessageWrap.getInstance2("您好，初次见面，请多多指教", "read"));
+        EventBus.getDefault().post(MessageWrap.getInstance2("您好;初次见面;请多多指教", "read"));
         finish();
 
     }
