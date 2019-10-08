@@ -113,7 +113,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
     }
 
     //文本语义理解
-    private void startTextNlp(String text) {
+    public void startTextNlp(String text) {
         try {
             // 在输入参数中设置tag，则对应结果中也将携带该tag，可用于关联输入输出
             String params = "data_type=text,tag=text-tag";
@@ -136,7 +136,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
                     Logger.e("进入识别状态");
                     if (event.arg1 == 0) {//语音激活
-                        EventBus.getDefault().post(MessageWrap.getInstance2("语音激活","status"));
+                        EventBus.getDefault().post(MessageWrap.getInstance2("语音激活", "status"));
                         if (checkAIUIAgent())
                             startTextNlp("你好");
                     }
@@ -271,7 +271,6 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         }
     };
 
-    //关闭语义理解
     public void aiUiOn() {
         Logger.e("播放完成");
         new Handler().postDelayed(new Runnable() {
@@ -283,7 +282,6 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         }, 200);
     }
 
-    //开启语义理解
     public void aiUiOff() {
         Logger.e("开始播放");
         //关闭语义识别避免自己和自己对话

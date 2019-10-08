@@ -168,7 +168,8 @@ public class QRCodeActivity extends BaseActivity implements QRCodeView.Delegate,
 
     @Override
     public void LoadingDataFail(String result) {
-
+        mZXingView.startSpotAndShowRect(); // 显示扫描框，并开始识别
+        initData();
     }
 
 

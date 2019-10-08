@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.NetworkUtils;
@@ -28,12 +29,14 @@ import com.hy.robot.activitys.VideoActivity;
 import com.hy.robot.bean.AiUiResultBean;
 import com.hy.robot.bean.ClockBean;
 import com.hy.robot.bean.MessageWrap;
+import com.hy.robot.bean.PushBean;
 import com.hy.robot.bean.TimeBean;
 import com.hy.robot.contract.IAIUIContract;
 import com.hy.robot.presenter.AIUIPresenter;
 import com.hy.robot.utils.CalendarReminderUtils;
 import com.hy.robot.utils.SwitchBGUtils;
 import com.hy.robot.utils.UIUtils;
+import com.hy.robot.utils.WIFIConnectionManager;
 import com.orhanobut.logger.Logger;
 import com.umeng.message.PushAgent;
 
@@ -57,6 +60,10 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
      * <p>
      * <p>
      * 闲泡自定义技能   闹钟   推送对接
+     * <p>
+     * 自定义的二个技能  先跑视频  ，  跳舞
+     * <p>
+     * 对接IM通讯录 IM发消息
      */
 
     private AIUIPresenter aiuiPresenter = new AIUIPresenter(this, this);
@@ -66,7 +73,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     protected int getContentViewId() {
         PushAgent.getInstance(this).onAppStart();
         EventBus.getDefault().register(this);
-
         return R.layout.activity_main;
     }
 
@@ -76,6 +82,16 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         super.onBackPressed();
         System.exit(0);
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -88,31 +104,21 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     @Override
     protected void initView() {
         mImageView = findViewById(R.id.im_bg);
-//        startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
-//        startActivity(new Intent(MainActivity.this, VideoActivity.class));
-//        startActivity(new Intent(MainActivity.this, MusicActivity.class));
-//        startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void initData() {
         requestPermissions();
         aiuiPresenter.startAIUI();
         aiuiPresenter.startSpeaker();
         Glide.with(App.getContext()).load(R.mipmap.zhuanqq).into(mImageView);
-//        createAlarm("房东舒服舒服", 20, 47, 55);
-//        Logger.e(System.currentTimeMillis() + "");
     }
 
     @Override
     protected void setListener() {
 
-        Intent i = new Intent("com.hy.robot.USER_ACTION");
-        i.putExtra("key", "com.hy.robot.USER_ACTION");
-        sendBroadcast(i);
-
     }
+
 
     @Override
     public void eventWeakup(int arg1) {
@@ -125,6 +131,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
+
             SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
 
             if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
@@ -139,21 +146,42 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         }
     }
 
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageWrap event) {
 
         // 手机端指令
-        Logger.e(event.message);
-        if (event.message.equals("stop")) {//音视频停止播放
-            aiuiPresenter.aiUiOn();
-        } else if (event.message.equals("play")) {//音视频开始播放
-            aiuiPresenter.aiUiOff();
-        }
+//        Logger.e(event.message);
+//        if (event.message.equals("stop")) {//音视频停止播放
+//            aiuiPresenter.aiUiOn();
+//        } else if (event.message.equals("play")) {//音视频开始播放
+//            aiuiPresenter.aiUiOff();
+//        }
 
-        if (event.type.equals("read")) {
+
+        if (event.type.equals("read")) {//阅读指定内容
             aiuiPresenter.speachText(event.message);
-        }else if (event.type.equals("Action")) {
-            ToastUtils.showLong(event.message);
+        } else if (event.type.equals("Action")) {//推送过来的消息
+            PushBean pushBean = new Gson().fromJson(event.message, PushBean.class);
+
+            if (pushBean.getAction().equals("avator3d")) {
+                EventBus.getDefault().post(MessageWrap.getInstance2("语音激活", "status"));
+                SwitchBGUtils.getInstance(mImageView).switchBg("joke");
+                EventBus.getDefault().post(MessageWrap.getInstance2("您好;初次见面;请多多指教", "read"));
+
+            } else if (pushBean.getAction().equals("levelup")) {
+
+                Intent i = new Intent("com.hy.robot.USER_ACTION");
+                i.putExtra("downloadUrl", "com.hy.robot.USER_ACTION");
+                sendBroadcast(i);
+                EventBus.getDefault().post(MessageWrap.getInstance2("我要去升级去了;失陪一会，马上就回来奥！！！", "read"));
+
+
+            } else if (pushBean.getAction().equals("unbind")) {
+                EventBus.getDefault().post(MessageWrap.getInstance2("与设备解绑成功，再见", "read"));
+                WIFIConnectionManager.getInstance(MainActivity.this).closeWifi();
+
+            }
         }
     }
 
@@ -179,8 +207,10 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    //还差二个自定义技能  跳舞和看个视频
     private void aiUiResult(AiUiResultBean.IntentBean result) {
+        //计时器清空，重新设置时间
+
         switch (result.getService()) {
             case "drama": //戏曲
             case "crossTalk": //相声
@@ -262,6 +292,15 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
+    private void daiji(int time) {
+        if (time == 20) {//c长时间待机
+
+        } else {//待机
+
+        }
+    }
+
+
     private void requestPermissions() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -292,8 +331,5 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         if (!NetworkUtils.isConnected()) {
             startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
         }
-
     }
-
-
 }

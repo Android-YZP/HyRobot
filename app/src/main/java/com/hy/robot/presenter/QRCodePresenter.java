@@ -68,6 +68,7 @@ public class QRCodePresenter extends BasePresenter<IQRCodeContract, BaseActivity
                 if (getView() != null) {
                     getView().LoadingDataFail(e.getMsg());
                     UIUtils.showTip(e.getMsg());
+
                 }
 
             }

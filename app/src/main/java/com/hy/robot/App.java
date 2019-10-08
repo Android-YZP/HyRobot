@@ -71,9 +71,9 @@ public class App extends BaseApplication {
             @Override
             public void dealWithCustomMessage(Context context, UMessage uMessage) {
                 super.dealWithCustomMessage(context, uMessage);
-                //1。同步形象
-                //2。推送升级
-                //3。设备解绑的
+                //1。同步形象        {"action":"avator3d","flag":1} //flag代表3d形象图的ID标识（表edu_constant_img）
+                //2。推送升级     {"action":"levelup"}
+                //3。设备解绑的   {"action":"unbind"}
                 EventBus.getDefault().post(MessageWrap.getInstance2(uMessage.custom, "Action"));
                 //升级成功的版本号
                 Logger.e("自定义数值：-------->" + uMessage.custom);
