@@ -294,7 +294,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
 
     public void aiUiReset() {
-        AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_RESET, 0, 0, "", null);
+        AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_CLEAN_DIALOG_HISTORY, 0, 0, "", null);
         mAIUIAgent.sendMessage(writeMsg);
 
     }

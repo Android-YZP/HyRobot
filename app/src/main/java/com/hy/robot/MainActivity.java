@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
 
-           Logger.e(new Gson().toJson(aiUiResultBean.getIntent().getData())+"================");
+            Logger.e(new Gson().toJson(aiUiResultBean.getIntent().getData()) + "================");
 
 
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
@@ -246,18 +246,15 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                         contentMessage = clockBeanMessage.getSlots().get(i).getValue();
                         Logger.e(clockBeanMessage.getSlots().get(i).getValue());
 
-                    }else if (clockBeanMessage.getSlots().get(i).getName().equals("name")) {
+                    } else if (clockBeanMessage.getSlots().get(i).getName().equals("name")) {
                         nameMessage = clockBeanMessage.getSlots().get(i).getValue();
                         Logger.e(clockBeanMessage.getSlots().get(i).getValue());
                     }
                 }
-                if (clockBeanMessage.getIntent().equals("INSTRUCTION")){
-                    Logger.e("INSTRUCTION");
+                if (result.getAnswer().getText().contains("已发送") || result.getAnswer().getText().contains("抱歉")) {
+                    Logger.e("aiUiReset");
+                    aiuiPresenter.aiUiReset();
                 }
-
-
-
-
                 break;
             case "飞鸽通话": //飞鸽通话
 
@@ -366,7 +363,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
             startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
         }
     }
-
 
 
 }
