@@ -251,8 +251,12 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                         Logger.e(clockBeanMessage.getSlots().get(i).getValue());
                     }
                 }
-                if (result.getAnswer().getText().contains("已发送") || result.getAnswer().getText().contains("抱歉")) {
+                if (result.getAnswer().getText().contains("已发送")  || result.getAnswer().getText().contains("抱歉")) {
                     Logger.e("aiUiReset");
+                    aiuiPresenter.aiUiReset();
+
+                } else if (result.getAnswer().getText().contains("请问您想发给谁") ) {
+                    aiuiPresenter.speachText("请对我说发送信息给某某某");
                     aiuiPresenter.aiUiReset();
                 }
                 break;
