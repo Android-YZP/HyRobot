@@ -130,6 +130,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
 
         @Override
         public void onEvent(AIUIEvent event) {
+            uploadEvent(event);
             switch (event.eventType) {
                 case AIUIConstant.EVENT_WAKEUP: {
                     getView().eventWeakup(event.arg1);
@@ -138,7 +139,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
                     if (event.arg1 == 0) {//语音激活
                         EventBus.getDefault().post(MessageWrap.getInstance2("语音激活", "status"));
                         if (checkAIUIAgent())
-                            startTextNlp("你好");
+                            startTextNlp("唤醒小飞");
                     }
                 }
                 break;
@@ -148,6 +149,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
                     try {
                         JSONObject bizParamJson = new JSONObject(event.info);
                         JSONObject data = bizParamJson.getJSONArray("data").getJSONObject(0);
+                        Logger.e(data.toString());
                         JSONObject content = data.getJSONArray("content").getJSONObject(0);
                         if (content.has("cnt_id")) {
                             String cnt_id = content.getString("cnt_id");
@@ -271,7 +273,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         }
     };
 
-    public void aiUiOn() {
+    private void aiUiOn() {
         Logger.e("播放完成");
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -282,7 +284,7 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
         }, 200);
     }
 
-    public void aiUiOff() {
+    private void aiUiOff() {
         Logger.e("开始播放");
         //关闭语义识别避免自己和自己对话
         AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null);
@@ -291,15 +293,22 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
     }
 
 
+    public void aiUiReset() {
+        AIUIMessage writeMsg = new AIUIMessage(AIUIConstant.CMD_RESET, 0, 0, "", null);
+        mAIUIAgent.sendMessage(writeMsg);
+
+    }
+
+
     /**********************************************************************上传动态实体*********************************************************************************/
 
-    private void uoLoad() {
+    public void upLoad() {
         try {
             JSONObject syncSchemaJson = new JSONObject();
             JSONObject paramJson = new JSONObject();
-            paramJson.put("id_name", "appid");
+            paramJson.put("id_name", "uid");
             paramJson.put("id_value", "");
-            paramJson.put("res_name", "OS2451892976.test_yonghu");
+            paramJson.put("res_name", "IFLYTEK.telephone_contact");
             syncSchemaJson.put("param", paramJson);
             syncSchemaJson.put("data", Base64.encodeToString(uploadContacts().getBytes(), Base64.DEFAULT | Base64.NO_WRAP));
             Logger.e(syncSchemaJson.toString());
@@ -322,18 +331,22 @@ public class AIUIPresenter extends BasePresenter<IAIUIContract, MainActivity> {
     private String uploadContacts() {
         // 上传进度消息，后续根据进度进行更新
         List<String> contacts = new ArrayList<>();
-        contacts.add("李三");
-        contacts.add("王三");
-        contacts.add("王大");
-        contacts.add("三少");
+        contacts.add("李三#17625017026");
+        contacts.add("王三#17625017026");
+        contacts.add("王大#17625017026");
+        contacts.add("三少#17625017026");
 
         StringBuilder contactJson = new StringBuilder();
         for (String contact : contacts) {
             String[] nameNumber = contact.split("#");
+
             //联系人空号码
-            if (nameNumber.length == 1) {
-                contactJson.append(String.format("{\"name\": \"%s\"}",
+            if(nameNumber.length == 1) {
+                contactJson.append(String.format("{\"name\": \"%s\"}\n",
                         nameNumber[0]));
+            } else {
+                contactJson.append(String.format("{\"name\": \"%s\", \"phoneNumber\": \"%s\" }\n",
+                        nameNumber[0], nameNumber[1]));
             }
         }
         Logger.e(contactJson.toString());

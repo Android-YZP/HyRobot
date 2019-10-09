@@ -14,6 +14,7 @@ import android.os.Build;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.NetworkUtils;
@@ -116,7 +117,12 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @Override
     protected void setListener() {
-
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aiuiPresenter.upLoad();
+            }
+        });
     }
 
 
@@ -127,17 +133,21 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @Override
     public void eventResult(String s) {
-        Logger.i(s);
+        Logger.json(s);
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
+
+           Logger.e(new Gson().toJson(aiUiResultBean.getIntent().getData())+"================");
+
+
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
 
             SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
 
-            if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
-                startActivity(new Intent(MainActivity.this, VideoActivity.class));
-                return;
-            }
+//            if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
+//                startActivity(new Intent(MainActivity.this, VideoActivity.class));
+//                return;
+//            }
 
             aiUiResult(aiUiResultBean.getIntent());
 
@@ -219,10 +229,34 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                 intent.putExtra("type", result.getService());
                 startActivity(intent);
                 break;
-            case "闲泡视频": //闲泡视频
+            case "OS2451892976.XianPaoVideo": //闲泡视频
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
-            case "飞鸽短信": //飞鸽短信
+            case "message": //飞鸽短信
+
+                aiuiPresenter.speachText(result.getAnswer().getText());
+                String jsonclockBeanMessage = new Gson().toJson(result.getSemantic());
+                String substringclockBeanMessage = jsonclockBeanMessage.substring(1, jsonclockBeanMessage.length() - 1);
+                Logger.e(substringclockBeanMessage);
+                String contentMessage = "";
+                String nameMessage = "";
+                ClockBean clockBeanMessage = new Gson().fromJson(substringclockBeanMessage, ClockBean.class);
+                for (int i = 0; i < clockBeanMessage.getSlots().size(); i++) {
+                    if (clockBeanMessage.getSlots().get(i).getName().equals("content")) {
+                        contentMessage = clockBeanMessage.getSlots().get(i).getValue();
+                        Logger.e(clockBeanMessage.getSlots().get(i).getValue());
+
+                    }else if (clockBeanMessage.getSlots().get(i).getName().equals("name")) {
+                        nameMessage = clockBeanMessage.getSlots().get(i).getValue();
+                        Logger.e(clockBeanMessage.getSlots().get(i).getValue());
+                    }
+                }
+                if (clockBeanMessage.getIntent().equals("INSTRUCTION")){
+                    Logger.e("INSTRUCTION");
+                }
+
+
+
 
                 break;
             case "飞鸽通话": //飞鸽通话
@@ -231,14 +265,14 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
             case "news": //三眼蛙资讯
                 startActivity(new Intent(MainActivity.this, TrieyeNewsActivity.class));
                 break;
-            case "跳舞": //跳舞
-
+            case "OS2451892976.dance": //跳舞
+                aiuiPresenter.speachText("你看看我跳的好不好看，嘻嘻");
+                SwitchBGUtils.getInstance(mImageView).switchBg("joke");
                 break;
-            case "待机": //待机
 
+            case "待机": //待机
                 break;
             case "长时间待机": //长时间待机
-
                 break;
             case "更换角色": //更换角色
 
@@ -332,4 +366,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
             startActivity(new Intent(MainActivity.this, QRCodeActivity.class));
         }
     }
+
+
+
 }
