@@ -217,7 +217,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     }
 
 
-    //还差二个自定义技能  跳舞和看个视频
+    //还差二个自定义技能  跳舞和看个视频      1。媒体播放     2。速显     3，导航
     private void aiUiResult(AiUiResultBean.IntentBean result) {
         //计时器清空，重新设置时间
 
