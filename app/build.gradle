@@ -39,4 +39,5 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     // 导入腾讯云 SDK aar
     implementation(name: 'LiteAVSDK_Professional_6.6.7458', ext: 'aar')
+    implementation 'com.tencent.imsdk:imsdk:4.5.55'
 }

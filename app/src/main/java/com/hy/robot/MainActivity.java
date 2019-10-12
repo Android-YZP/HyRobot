@@ -1,25 +1,17 @@
 package com.hy.robot;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.AlarmClock;
-import android.provider.CalendarContract;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.com1075.library.base.BaseActivity;
 import com.google.gson.Gson;
@@ -35,19 +27,19 @@ import com.hy.robot.bean.TimeBean;
 import com.hy.robot.contract.IAIUIContract;
 import com.hy.robot.presenter.AIUIPresenter;
 import com.hy.robot.utils.CalendarReminderUtils;
+import com.hy.robot.utils.ImUtils;
 import com.hy.robot.utils.SwitchBGUtils;
 import com.hy.robot.utils.UIUtils;
 import com.hy.robot.utils.WIFIConnectionManager;
 import com.orhanobut.logger.Logger;
+import com.tencent.imsdk.friendship.TIMFriend;
 import com.umeng.message.PushAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.List;
 
 public class MainActivity extends BaseActivity implements IAIUIContract {
     /**
@@ -69,6 +61,9 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     private AIUIPresenter aiuiPresenter = new AIUIPresenter(this, this);
     private ImageView mImageView;
+    private String mContentMessage;
+    private String mNameMessage;
+    private String mInsType;
 
     @Override
     protected int getContentViewId() {
@@ -123,8 +118,46 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                 aiuiPresenter.upLoad();
             }
         });
+        ImUtils.getInstance().IMInit();
+        ImUtils.getInstance().setOnImListener(new ImUtils.OnImListener() {
+            @Override
+            public void msg(String s) {
+                aiuiPresenter.speachText(s);
+            }
+
+            @Override
+            public void txl(List<TIMFriend> s) {
+
+            }
+        });
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageWrap event) {
+
+        if (event.type.equals("read")) {//阅读指定内容
+            aiuiPresenter.speachText(event.message);
+        } else if (event.type.equals("Action")) {//推送过来的消息
+
+            PushBean pushBean = new Gson().fromJson(event.message, PushBean.class);
+            if (pushBean.getAction().equals("avator3d")) {
+                EventBus.getDefault().post(MessageWrap.getInstance2("语音激活", "status"));
+                SwitchBGUtils.getInstance(mImageView).switchBg("joke");
+                EventBus.getDefault().post(MessageWrap.getInstance2("您好;初次见面;请多多指教", "read"));
+
+            } else if (pushBean.getAction().equals("levelup")) {
+                Intent i = new Intent("com.hy.robot.USER_ACTION");
+                i.putExtra("downloadUrl", "com.hy.robot.USER_ACTION");
+                sendBroadcast(i);
+                EventBus.getDefault().post(MessageWrap.getInstance2("我要去升级去了;失陪一会，马上就回来奥！！！", "read"));
+
+            } else if (pushBean.getAction().equals("unbind")) {
+                EventBus.getDefault().post(MessageWrap.getInstance2("与设备解绑成功，再见", "read"));
+                WIFIConnectionManager.getInstance(MainActivity.this).closeWifi();
+
+            }
+        }
+    }
 
     @Override
     public void eventWeakup(int arg1) {
@@ -136,62 +169,11 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
         Logger.json(s);
         try {
             AiUiResultBean aiUiResultBean = new Gson().fromJson(s, AiUiResultBean.class);
-
-            Logger.e(new Gson().toJson(aiUiResultBean.getIntent().getData()) + "================");
-
-
             UIUtils.showTip(aiUiResultBean.getIntent().getService());
-
             SwitchBGUtils.getInstance(mImageView).switchBg(aiUiResultBean.getIntent().getService() + "");
-
-//            if (aiUiResultBean.getIntent().getAnswer().getText().equals("闲炮视频")) {
-//                startActivity(new Intent(MainActivity.this, VideoActivity.class));
-//                return;
-//            }
-
             aiUiResult(aiUiResultBean.getIntent());
-
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageWrap event) {
-
-        // 手机端指令
-//        Logger.e(event.message);
-//        if (event.message.equals("stop")) {//音视频停止播放
-//            aiuiPresenter.aiUiOn();
-//        } else if (event.message.equals("play")) {//音视频开始播放
-//            aiuiPresenter.aiUiOff();
-//        }
-
-
-        if (event.type.equals("read")) {//阅读指定内容
-            aiuiPresenter.speachText(event.message);
-        } else if (event.type.equals("Action")) {//推送过来的消息
-            PushBean pushBean = new Gson().fromJson(event.message, PushBean.class);
-
-            if (pushBean.getAction().equals("avator3d")) {
-                EventBus.getDefault().post(MessageWrap.getInstance2("语音激活", "status"));
-                SwitchBGUtils.getInstance(mImageView).switchBg("joke");
-                EventBus.getDefault().post(MessageWrap.getInstance2("您好;初次见面;请多多指教", "read"));
-
-            } else if (pushBean.getAction().equals("levelup")) {
-
-                Intent i = new Intent("com.hy.robot.USER_ACTION");
-                i.putExtra("downloadUrl", "com.hy.robot.USER_ACTION");
-                sendBroadcast(i);
-                EventBus.getDefault().post(MessageWrap.getInstance2("我要去升级去了;失陪一会，马上就回来奥！！！", "read"));
-
-
-            } else if (pushBean.getAction().equals("unbind")) {
-                EventBus.getDefault().post(MessageWrap.getInstance2("与设备解绑成功，再见", "read"));
-                WIFIConnectionManager.getInstance(MainActivity.this).closeWifi();
-
-            }
         }
     }
 
@@ -203,21 +185,20 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
 
     @Override
     public void onSpeakBegin() {
-
+        //暂停，清空计时器
     }
 
     @Override
     public void onSpeakCompleted() {
-
+        //开始计时器
     }
 
     @Override
     public void error(String e) {
-
+        //错误提示
     }
 
 
-    //还差二个自定义技能  跳舞和看个视频      1。媒体播放     2。速显     3，导航
     private void aiUiResult(AiUiResultBean.IntentBean result) {
         //计时器清空，重新设置时间
 
@@ -233,32 +214,38 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                 startActivity(new Intent(MainActivity.this, VideoActivity.class));
                 break;
             case "message": //飞鸽短信
-
                 aiuiPresenter.speachText(result.getAnswer().getText());
+
                 String jsonclockBeanMessage = new Gson().toJson(result.getSemantic());
                 String substringclockBeanMessage = jsonclockBeanMessage.substring(1, jsonclockBeanMessage.length() - 1);
                 Logger.e(substringclockBeanMessage);
-                String contentMessage = "";
-                String nameMessage = "";
+
                 ClockBean clockBeanMessage = new Gson().fromJson(substringclockBeanMessage, ClockBean.class);
+
                 for (int i = 0; i < clockBeanMessage.getSlots().size(); i++) {
                     if (clockBeanMessage.getSlots().get(i).getName().equals("content")) {
-                        contentMessage = clockBeanMessage.getSlots().get(i).getValue();
+                        mContentMessage = clockBeanMessage.getSlots().get(i).getValue();
                         Logger.e(clockBeanMessage.getSlots().get(i).getValue());
 
                     } else if (clockBeanMessage.getSlots().get(i).getName().equals("name")) {
-                        nameMessage = clockBeanMessage.getSlots().get(i).getValue();
+                        mNameMessage = clockBeanMessage.getSlots().get(i).getValue();
                         Logger.e(clockBeanMessage.getSlots().get(i).getValue());
                     }
                 }
-                if (result.getAnswer().getText().contains("已发送")  || result.getAnswer().getText().contains("抱歉")) {
-                    Logger.e("aiUiReset");
-                    aiuiPresenter.aiUiReset();
 
-                } else if (result.getAnswer().getText().contains("请问您想发给谁") ) {
+                if (result.getAnswer().getText().contains("已发送")) {
+                    aiuiPresenter.aiUiReset();
+                    ImUtils.getInstance().IMSendMsg(mNameMessage, mContentMessage);
+                    return;
+                } else if (result.getAnswer().getText().contains("抱歉")) {
+                    aiuiPresenter.aiUiReset();
+                    return;
+                } else if (result.getAnswer().getText().contains("请问您想发给谁")) {
                     aiuiPresenter.speachText("请对我说发送信息给某某某");
                     aiuiPresenter.aiUiReset();
+                    return;
                 }
+
                 break;
             case "飞鸽通话": //飞鸽通话
 
@@ -272,8 +259,10 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                 break;
 
             case "待机": //待机
+
                 break;
             case "长时间待机": //长时间待机
+
                 break;
             case "更换角色": //更换角色
 
