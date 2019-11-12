@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.com1075.library.base.BaseActivity2;
 import com.google.gson.Gson;
@@ -38,6 +40,7 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
     private TXVodPlayer mLivePlayer;
     private VideoPresenter mVideoPresenter = new VideoPresenter(this, this);
     private List<XianPaoBean.ResultBean> mData;
+    private RelativeLayout mRlRootView;
 
     @Override
     public void onDestroy() {
@@ -59,8 +62,14 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
 
     @Override
     protected void initView() {
+        mRlRootView = findViewById(R.id.rl_toot_view);
         mVpVideo = findViewById(R.id.vp_video);
         mVideo = findViewById(R.id.video_view);
+
+        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) mVpVideo.getLayoutParams();
+        Params.height = mVpVideo.getWidth();
+        Params.width = mVpVideo.getHeight();
+        mVpVideo.setLayoutParams(Params);
 
     }
 
@@ -116,6 +125,8 @@ public class VideoActivity extends BaseActivity2 implements IVideoContract {
 
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {//视频播放开始，如果您自己做 loading，会需要它
                     findViewById(R.id.image).setVisibility(View.GONE);
+                    mRlRootView.setBackgroundColor(Color.BLACK);
+
                 } else if (event == TXLiveConstants.PLAY_EVT_PLAY_END) {//播放结束，HTTP-FLV 的直播流是不抛这个事件的
                     if (mVpVideo.getCurrentItem() >= VIDEO_MAX_VALUE) finish();
                     mVpVideo.setCurrentItem(mVpVideo.getCurrentItem() + 1);

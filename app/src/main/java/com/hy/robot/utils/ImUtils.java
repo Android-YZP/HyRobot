@@ -3,9 +3,7 @@ package com.hy.robot.utils;
 import android.os.Environment;
 import android.util.Log;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.hy.robot.App;
-import com.hy.robot.R;
 import com.orhanobut.logger.Logger;
 import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMConnListener;
@@ -224,7 +222,6 @@ public class ImUtils {
                 //错误码 code 和错误描述 desc，可用于定位请求失败原因
                 //错误码 code 含义请参见错误码表
                 Log.d(tag, "send message failed. code: " + code + " errmsg: " + desc);
-                ToastUtils.showCustomLong(R.layout.activity_main);
             }
 
             @Override

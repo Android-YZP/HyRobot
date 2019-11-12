@@ -17,6 +17,7 @@ import com.hy.robot.bean.MessageWrap;
 import com.orhanobut.logger.Logger;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXPlayerAuthBuilder;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
@@ -71,6 +72,7 @@ public class MusicActivity extends BaseActivity2 {
         String flvUrl = mCrossTalkBean.getResult().get(i++).getUrl();
         Logger.e(flvUrl);
         mLivePlayer.startPlay(flvUrl);
+        mLivePlayer.startPlay(new TXPlayerAuthBuilder());
         // 设置填充模式
         mLivePlayer.setRenderMode(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION);
         // 设置画面渲染方向

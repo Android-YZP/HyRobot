@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements IAIUIContract {
+
     /**
      * 获取闲泡视频
      * 获取个人信息
@@ -50,7 +51,6 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
      * 获取升级
      * 获取三眼咨询
      * 音频 视频  IM 每个单独一个类去解决
-     * <p>
      * <p>
      * 闲泡自定义技能   闹钟   推送对接
      * <p>
@@ -186,11 +186,13 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
     @Override
     public void onSpeakBegin() {
         //暂停，清空计时器
+
     }
 
     @Override
     public void onSpeakCompleted() {
         //开始计时器
+
     }
 
     @Override
@@ -302,7 +304,7 @@ public class MainActivity extends BaseActivity implements IAIUIContract {
                             content + "",
                             "小飞为你提醒",
                             datetime,
-                            10, repeat + "");
+                            0, repeat + "");
                 } else {
                     CalendarReminderUtils.createAlarm(MainActivity.this, repeat, content, datetime, (int) System.currentTimeMillis());
                 }
